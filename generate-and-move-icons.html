@@ -65,7 +65,7 @@
 
         //this number is the "choose your billionaire" variable being fed in
         var billionaireWorth = 70300000000
-        
+
         // if time: make a counter so that
         // as more weight is added, the counter alters the text
         // e.g. feed nyc SNAP recipients for 1 yr... 2 yrs... 3 yrs... 
@@ -91,7 +91,7 @@
             var smallSide = "R"; var bigSide = "L"; var smallLabel = compareName
         }
         else { var bigger = compareWorth; var smaller = billionareWorth; var smallSide = "L"; var bigSide = "R"; var smallLabel = billiName }
-        
+
         // determine the ratio between the variables
         compareRatio = Math.ceil(bigger / smaller)
         console.log(compareRatio)
@@ -122,7 +122,7 @@
             .attr("stroke-width", 2)
             .attr('stroke', "black");
 
-        
+
         var stemHeight = 50
         var containerWidth = 100
 
@@ -142,15 +142,15 @@
             // eventially make them fall onto the scale
 
             .on("click", function () {
-            for (i = 0; i < compareRatio; i +=1) {
-            makeIcons(smaller, smallSide, smallLabel, i);
-            
-            turnRect(compareScale(smaller), smallSide)
-            turnRect(compareScale(bigger), bigSide)
-        }
-            d3.select("billiIcon")
-            .transition()
-            .attr("transform", "translate(0, 50)")
+                for (i = 0; i < compareRatio; i += 1) {
+                    makeIcons(smaller, smallSide, smallLabel, i);
+
+                    turnRect(compareScale(smaller), smallSide)
+                    turnRect(compareScale(bigger), bigSide)
+                }
+                d3.select("billiIcon")
+                    .transition()
+                    .attr("transform", "translate(0, 50)")
 
             })
             ;
@@ -189,38 +189,38 @@
                         return xRect + 5 * padding + iconRadiusScale(weight) / 2
                     }
                     // put comparison icon on right side of screen
-                    else { return xRect + w - 5 * padding - iconRadiusScale(weight) / 2+i%5*2*(iconRadiusScale(weight))}
+                    else { return xRect + w - 5 * padding - iconRadiusScale(weight) / 2 + i % 5 * 2 * (iconRadiusScale(weight)) }
                 })
                 // assign each icon an ID
-                .attr("id", function() {
+                .attr("id", function () {
                     if (side == "L") {
                         // the billionaire gets its own unique id
                         return "billiIcon"
                     }
                     // the comparison icons get numbered ids like "compareIcon3"
-                    else {return "compareIcon" + i}
+                    else { return "compareIcon" + i }
                 })
-                .attr("cy", Math.floor(i/5) *2*(iconRadiusScale(weight)))
-                 // or, if u want them off screen the whole time:
+                .attr("cy", Math.floor(i / 5) * 2 * (iconRadiusScale(weight)))
+                // or, if u want them off screen the whole time:
                 // .attr("cy", - iconRadiusScale(bigger))
                 // for now, lets keep them on screen so we can be sure they are getting generated correctly
                 .attr("fill", "gold")
                 .attr("r", iconRadiusScale(weight))
-                .on("click", function(){
+                .on("click", function () {
                     d3.select(this)
                     console.log(this.id)
                 })
-            
-                d3.select("#compareIcon" + i)
+
+            d3.select("#compareIcon" + i)
                 .transition()
                 // trying to delay them falling at their own individual randomized times
-                .delay(1000*Math.random())
+                .delay(1000 * Math.random())
                 .duration(1000)
                 // put fill to blue as a test to see if this code was executing and maybe it was just an issue with transform
                 // but it wasnt, which makes me think it's a selection issue
                 .attr("fill", "blue")
                 .attr("transform", "translate(0,400)")//!!here i just put some numbers for moving it and it works just as you wrote it before
-            };
+        };
 
 
         function turnRect(angle, side) {
@@ -236,9 +236,9 @@
             if (rectDisplayAngle > 45) rectDisplayAngle = 45
             if (rectDisplayAngle < -45) rectDisplayAngle = -45
             d3.select("#billiIcon")
-            .transition()
-            .duration(500)
-            .attr("transform", "translate (0," + (iconRadiusScale(bigger) + yRect - iconRadiusScale(bigger)/2) + ")");
+                .transition()
+                .duration(500)
+                .attr("transform", "translate (0," + (iconRadiusScale(bigger) + yRect - iconRadiusScale(bigger) / 2) + ")");
 
             d3.select('rect')
                 .transition()
