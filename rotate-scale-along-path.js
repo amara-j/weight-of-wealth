@@ -81,8 +81,8 @@ var path = svg.append("path")
 //draw the little sticks for the plates left and right
 var stemH = 30
 
-var left = svg.append("g")
-left.append("rect")
+var leftContainer = svg.append("g")
+leftContainer.append("rect")
     .attr("x", w / 4) //Starting x
     .attr("y", w / 2 - stemH) //Starting y
     .attr("height", stemH)
@@ -93,7 +93,7 @@ left.append("rect")
     .delay(1000)
     .duration(10000)
     .tween("pathTween", function () { return pathTweenLeft(path) })
-left.append("rect")
+leftContainer.append("rect")
     .attr("x", w / 4 - stemH / 2) //Starting x
     .attr("y", w / 2 - stemH) //Starting y
     .attr("height", 2)
@@ -108,8 +108,8 @@ left.append("rect")
 
 //!!! this is where we draw the handle first   
 //!!! this is the vertical   
-var right = svg.append("g")
-right.append("rect")
+var rightContainer = svg.append("g")
+rightContainer.append("rect")
     .attr("x", w * 3 / 4) //!!! Starting x - these will have to be updated in the tween function below for the right
     .attr("y", w / 2 - stemH) //!!! Starting y- these will have to be updated in the tween function below for the right
     .attr("height", stemH)
@@ -123,7 +123,7 @@ right.append("rect")
 
 
 //!!! this is the horizontal line
-right.append("rect")
+rightContainer.append("rect")
     .attr("x", w * 3 / 4 - stemH / 2) //Starting x- these will have to be updated in the tween function below for the right
     .attr("y", w / 2 - stemH) //Starting y- these will have to be updated in the tween function below for the right
     .attr("height", 2)
