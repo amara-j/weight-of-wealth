@@ -86,6 +86,16 @@ var leftPlate = leftContainer.append("rect")
     .attr("width", plateWidth)
     .attr("id", "leftPlate")
     .attr("fill", "black")
+    // try making this interactive instead 
+    .on("click", function () {
+        makeIcons(billionaireWorth, "L", 1)
+        d3.select("#billiIcon")
+            .transition()
+            .duration(1000)
+            .attr("transform", "translate(0," + (doubleArmLength / 2 + iconRadiusScale(billionaireWorth)) + ")")
+        rotateArms(-angleScale(billionaireWorth))
+    })
+
 
 // do the same thing for the other side:
 // create small svg container for stem+plate unit on right side
@@ -106,6 +116,22 @@ var rightPlate = rightContainer.append("rect")
     .attr("width", plateWidth)
     .attr("id", "rightPlate")
     .attr("fill", "black")
+    .on("click", function () {
+        for (i = 0; i < compareRatio; i += 1) {
+            makeIcons(compareWorth, "R", i)
+        }
+
+        d3.select("#compareIcon" + i)
+            .transition()
+            // delay falling icons to their own randomized times
+            .delay(4000 + 1000 * Math.random())
+            .duration(1000)
+            .attr("fill", "blue")
+            // replace 10 with Small radius variable
+            .attr("transform", "translate(0," + (doubleArmLength - Math.floor(i / 5) * 2 * 10) + ")")
+
+        rotateArms(45)
+    })
 
 
 //draw circle at center of scale
@@ -127,7 +153,6 @@ graphContainer.append("circle")
 
         makeIcons(billionaireWorth, "L", 1)
         for (i = 0; i < compareRatio; i += 1) {
-            console.log(i)
             makeIcons(compareWorth, "R", i)
         }
     })
@@ -146,36 +171,64 @@ function rotateArms(rotateAngle) {
         .duration(10000)
         .attr("transform", "rotate(" + rotateAngle + " 0 0)");
 
-    d3.select("#leftStem")
-        .transition()
-        .duration(10000)
-        // call the tweening function to update new position
-        .tween("pathTween", function () { return pathTweenLeft(path) })
+    if (rotateAngle < 0) {
 
-    d3.select("#leftPlate")
-        .transition()
-        .duration(10000)
-        // call the tweening function to update new position
-        .tween("pathTween", function () { return pathTweenLeft(path) })
+        d3.select("#leftStem")
+            .transition()
+            .duration(10000)
+            // call the tweening function to update new position
+            .tween("pathTween", function () { return pathTweenLeft(pathL) })
 
-    d3.select("#rightStem")
-        .transition()
-        .duration(10000)
-        // call the tweening function to update new position
-        .tween("pathTween", function () { return pathTweenRight(path) })
+        d3.select("#leftPlate")
+            .transition()
+            .duration(10000)
+            // call the tweening function to update new position
+            .tween("pathTween", function () { return pathTweenLeft(pathL) })
 
-    d3.select("#rightPlate")
-        .transition()
-        .duration(10000)
-        // call the tweening function to update new position
-        .tween("pathTween", function () { return pathTweenRight(path) })
+        d3.select("#rightStem")
+            .transition()
+            .duration(10000)
+            // call the tweening function to update new position
+            .tween("pathTween", function () { return pathTweenRight(pathL) })
+
+        d3.select("#rightPlate")
+            .transition()
+            .duration(10000)
+            // call the tweening function to update new position
+            .tween("pathTween", function () { return pathTweenRight(pathL) })
+    }
+    else {
+        d3.select("#leftStem")
+            .transition()
+            .duration(10000)
+            // call the tweening function to update new position
+            .tween("pathTween", function () { return pathTweenLeft(pathR) })
+
+        d3.select("#leftPlate")
+            .transition()
+            .duration(10000)
+            // call the tweening function to update new position
+            .tween("pathTween", function () { return pathTweenLeft(pathR) })
+
+        d3.select("#rightStem")
+            .transition()
+            .duration(10000)
+            // call the tweening function to update new position
+            .tween("pathTween", function () { return pathTweenRight(pathR) })
+
+        d3.select("#rightPlate")
+            .transition()
+            .duration(10000)
+            // call the tweening function to update new position
+            .tween("pathTween", function () { return pathTweenRight(pathR) })
+    }
 
 }
 
 //generate a series of nodes around the circle
 // visualize them with circles to be sure it's working as it should
 // we want two circles at 0 and π radians that line up with where the scale starts
-function createNodes(numNodes, radius) {
+function createNodes(numNodes, radius, side) {
     var nodes = [],
         width = (radius * 2) + svgWidth / 2,
         height = (radius * 2) + svgWidth / 2,
@@ -183,28 +236,46 @@ function createNodes(numNodes, radius) {
         x,
         y,
         i;
-    for (i = 0; i < numNodes + 1; i++) {
-        angle = (i / (numNodes / 2)) * Math.PI - Math.PI / 2;
-        x = (radius * Math.cos(angle)) + (width / 2);
-        y = (radius * Math.sin(angle)) + (width / 2);
-        nodes.push([x, y]);
-        svg.append("circle")
-            .attr("cx", x)
-            .attr("cy", y)
-            .attr("fill", "purple")
-            .attr("r", 3)
+    if (side = "L") {
+        for (i = 0; i < numNodes + 1; i++) {
+            return angle = (i / (numNodes / 2)) * Math.PI - Math.PI / 2
+        }
     }
+    else {
+        for (i = 0; i < numNodes + 1; i++) {
+            return angle = (-i / (numNodes / 2)) * Math.PI - Math.PI / 2
+        }
+    }
+    ;
+    x = (radius * Math.cos(angle)) + (width / 2);
+    y = (radius * Math.sin(angle)) + (width / 2);
+    nodes.push([x, y]);
+    svg.append("circle")
+        .attr("cx", x)
+        .attr("cy", y)
+        .attr("fill", "purple")
+        .attr("r", 3)
     return nodes;
 }
-var points = createNodes(20, svgWidth / 4)
+
+var pointsL = createNodes(20, svgWidth / 4, "L")
+var pointsR = createNodes(20, svgWidth / 4, "R")
 
 //draw these points as a regular d3.line path
-var path = svg.append("path")
-    .data([points])
+var pathL = svg.append("path")
+    .data([pointsL])
     .attr("d", d3.line().curve(d3.curveCardinal))
     .style("stroke", "red")
     .attr("opacity", .3)
     .style("fill", "none");
+
+var pathR = svg.append("path")
+    .data([pointsR])
+    .attr("d", d3.line().curve(d3.curveCardinal))
+    .style("stroke", "red")
+    .attr("opacity", .3)
+    .style("fill", "none");
+
 
 function pathTweenRight(path) {
     var length = path.node().getTotalLength();
@@ -295,20 +366,6 @@ function makeIcons(weight, side, i) {
         .on("click", function () {
             d3.select(this)
         })
-
-    d3.select("#compareIcon" + i)
-        .transition()
-        // delay falling icons to their own randomized times
-        .delay(4000 + 1000 * Math.random())
-        .duration(1000)
-        .attr("fill", "blue")
-        .attr("transform", "translate(0," + (doubleArmLength - Math.floor(i / 5) * 2 * (iconRadiusScale(weight))) + ")")
-
-    d3.select("#billiIcon")
-        .transition()
-        .duration(1000)
-        .attr("transform", "translate(0," + (doubleArmLength / 2 + iconRadiusScale(billionaireWorth)) + ")")
-    rotateArms(rotateAngle)
 };
 
 // Shouldn't be able to click center of scale button more than once
