@@ -20,7 +20,8 @@ var compareWorth = 2762628933
 // --------------------------------//
 
 // determine the ratio between the variables
-compareRatio = Math.ceil(billionaireWorth / compareWorth)
+//compareRatio = Math.ceil(billionaireWorth / compareWorth)
+var compareRatio = 40
 
 // to make the comparison scalable, create scale with billionaire worth as upper limit
 var angleScale = d3.scaleLinear()
@@ -29,7 +30,9 @@ var angleScale = d3.scaleLinear()
 
 var iconRadiusScale = d3.scaleLinear()
     .domain([0, billionaireWorth])
-    .range([5, 70]);
+    .range([10, 70]);
+
+iconRadiusScale(2762628933)
 
 // first rotateAngle = - angleScale(billionaireWorth)
 // then rotateAngle = angleScale(compareWorth)
@@ -124,6 +127,7 @@ graphContainer.append("circle")
 
         makeIcons(billionaireWorth, "L", 1)
         for (i = 0; i < compareRatio; i += 1) {
+            console.log(i)
             makeIcons(compareWorth, "R", i)
         }
     })
@@ -210,16 +214,22 @@ function pathTweenRight(path) {
     return function (t) {
         var point = path.node().getPointAtLength(r(t));
         // Get the next point along the path
-
         d3.select("#rightStem")
             // select right stem
             .attr("x", point.x - stemWidth / 2)
             .attr("y", point.y - stemHeight + stemOffset)
-
         //this is the horizontal one
         d3.select("#rightPlate")
             .attr("x", point.x - plateWidth / 2)
             .attr("y", point.y - stemHeight + stemOffset)
+        d3.selectAll(".compareIcon")
+            .each(function (d, i) {
+                d3.select(this)
+                    // replace this crazy hard coded number with icon radius scale!!
+                    // make these into public variables
+                    .attr("cx", point.x + 2 * (i % 4) * iconRadiusScale(2762628933) - plateWidth / 3)
+                    .attr("cy", point.y - stemHeight + stemOffset - doubleArmLength - plateHeight)
+            })
     }
 }
 
@@ -237,6 +247,7 @@ function pathTweenLeft(path) {
             .attr("y", point.y - stemHeight + stemOffset)
         d3.select("#billiIcon")
             .attr("cx", point.x)
+            // replace 70 with radius of big circle!!
             .attr("cy", point.y - 2 * stemHeight + stemOffset - svgWidth / 4 - 70 - plateHeight)
     }
 }
@@ -252,9 +263,13 @@ function makeIcons(weight, side, i) {
             }
             // put comparison icon on right side of screen
             // stack the icons, regardless of how many there are
-            else { return 1.5 * doubleArmLength + i % 5 * 2 * (iconRadiusScale(weight)) }
+            // else { return 1.5 * doubleArmLength - plateWidth / 2 }
+            else { return 1.5 * doubleArmLength - plateWidth / 2 + i % 4 * 2 * (iconRadiusScale(2762628933)) }
         })
         // assign each icon an ID
+        .attr("class", function () {
+            if (side == "R") { return "compareIcon" }
+        })
         .attr("id", function () {
             if (side == "L") {
                 // the billionaire gets its own unique id
@@ -263,7 +278,17 @@ function makeIcons(weight, side, i) {
             // the comparison icons get numbered ids like "compareIcon3"
             else { return "compareIcon" + i }
         })
-        .attr("cy", Math.floor(i / 5) * 2 * (iconRadiusScale(weight)))
+        .attr("cy", function () {
+            if (side == "R") {
+                return - Math.floor(i / 5) * (iconRadiusScale(weight) - stemHeight - plateHeight - stemOffset)
+            }
+            else {
+                return (-iconRadiusScale(weight))
+            }
+        })
+
+        // perfect y for icons to fall to: doubleArmLength - stemHeight - plateHeight
+
         //.attr("cy", svgHeight / 2 - stemHeight + stemOffset)
         .attr("fill", "gold")
         .attr("r", iconRadiusScale(weight))
@@ -274,32 +299,20 @@ function makeIcons(weight, side, i) {
     d3.select("#compareIcon" + i)
         .transition()
         // delay falling icons to their own randomized times
-        .delay(1000 * Math.random())
+        .delay(4000 + 1000 * Math.random())
         .duration(1000)
         .attr("fill", "blue")
-        .attr("transform", "translate(0,250)")
+        .attr("transform", "translate(0," + (doubleArmLength - Math.floor(i / 5) * 2 * (iconRadiusScale(weight))) + ")")
 
     d3.select("#billiIcon")
         .transition()
         .duration(1000)
-        .attr("transform", "translate(0,270)")
-        .on("end", function () {
-            rotateArms(rotateAngle)
-        })
+        .attr("transform", "translate(0," + (doubleArmLength / 2 + iconRadiusScale(billionaireWorth)) + ")")
+    rotateArms(rotateAngle)
 };
-
-
-// TO DO TUES AM
-
-// make icons travel with the scale once they drop onto it
-// using a transition.end() to trigger scale rotation once icons falling transition ends?
-// but then the icons still need to move with the scale.  
-
-// when icons pile up, remainder should be on top, not bottom
-// (looks weird for whole pile to be balancing on one ball)
-
-// Make list of exactly which variables S needs to pass into this code for integration
 
 // Shouldn't be able to click center of scale button more than once
 
 // style scale
+
+// rename double arm length
