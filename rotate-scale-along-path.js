@@ -8,32 +8,34 @@ var stemHeight = 60
 var stemWidth = 4
 var plateHeight = 4
 var plateWidth = 110
-var stemOffset = 3
+var stemOffset = 3 // makes it look more like the stems are really attached to the scale– there is a tiny gap otherwise
 
+// -- new vars -- 
+var padding = 20
+var doubleArmLength = svgWidth / 2
+// ------------------------ these numbers are selection variable being fed in from sharvari's code
+var billionaireWorth = 70300000000 
+var compareWorth = 2762628933
+// --------------------------------//
 
+// determine the ratio between the variables
+compareRatio = Math.ceil(billionaireWorth / compareWorth)
 
+// to make the comparison scalable, create scale with billionaire worth as upper limit
+var angleScale = d3.scaleLinear()
+    .domain([0, billionaireWorth])
+    .range([0, 45]);
 
-// var angleScale = d3.scaleLinear()
-// .domain([0, billionaireWorth])
-// .range([0,45]);
-
-// var iconRadiusScale = d3.scaleLinear()
-// .domain([0, billionaireWorth])
-// .range([5, 70]);
+var iconRadiusScale = d3.scaleLinear()
+    .domain([0, billionaireWorth])
+    .range([5, 70]);
 
 // first rotateAngle = - angleScale(billionaireWorth)
 // then rotateAngle = angleScale(compareWorth)
 
-
-
-
-//stem offset makes it look more like the stems are really attached to the scale– there is a tiny gap otherwise
-
 var svg = d3.select("#graph").append("svg")
     .attr("width", svgWidth)
     .attr("height", svgHeight)
-
-var fulcrum = svg.append()
 
 // create svg container
 var graphContainer = svg.append("g").attr("id", "balanceBar")
@@ -153,6 +155,11 @@ graphContainer.append("circle")
             .duration(10000)
             // call the tweening function to update new position
             .tween("pathTween", function () { return pathTweenRight(path) })
+
+        makeIcons(billionaireWorth, "L", 1)
+        for (i = 0; i < compareRatio; i += 1) {
+            makeIcons(compareWorth, "R", i)
+        }
     })
 
 
@@ -225,3 +232,47 @@ function pathTweenLeft(path) {
             .attr("y", point.y - stemHeight + stemOffset)
     }
 }
+
+
+
+// define makeIcons function
+function makeIcons(weight, side, i) {
+    svg.append('circle')
+        .attr("cx", function () {
+            // put billionaire icon on left side of screen
+            if (side == "L") {
+                return 200
+            }
+            // put comparison icon on right side of screen
+            // stack the icons, regardless of how many there are
+            else { return doubleArmLength - 5 * padding - iconRadiusScale(weight) / 2 + i % 5 * 2 * (iconRadiusScale(weight)) }
+        })
+        // assign each icon an ID
+        .attr("id", function () {
+            if (side == "L") {
+                // the billionaire gets its own unique id
+                return "billiIcon"
+            }
+            // the comparison icons get numbered ids like "compareIcon3"
+            else { return "compareIcon" + i }
+        })
+        .attr("cy", Math.floor(i / 5) * 2 * (iconRadiusScale(weight)))
+        .attr("fill", "gold")
+        .attr("r", iconRadiusScale(weight))
+        .on("click", function () {
+            d3.select(this)
+        })
+
+    d3.select("#compareIcon" + i)
+        .transition()
+        // delay falling icons to their own randomized times
+        .delay(1000 * Math.random())
+        .duration(1000)
+        .attr("fill", "blue")
+        .attr("transform", "translate(0,400)")
+
+    d3.select("#billiIcon")
+        .transition()
+        .duration(1000)
+        .attr("transform", "translate(0,400)")
+};
