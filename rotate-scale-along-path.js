@@ -9,11 +9,31 @@ var stemWidth = 4
 var plateHeight = 4
 var plateWidth = 110
 var stemOffset = 3
+
+
+
+
+// var angleScale = d3.scaleLinear()
+// .domain([0, billionaireWorth])
+// .range([0,45]);
+
+// var iconRadiusScale = d3.scaleLinear()
+// .domain([0, billionaireWorth])
+// .range([5, 70]);
+
+// first rotateAngle = - angleScale(billionaireWorth)
+// then rotateAngle = angleScale(compareWorth)
+
+
+
+
 //stem offset makes it look more like the stems are really attached to the scale– there is a tiny gap otherwise
 
 var svg = d3.select("#graph").append("svg")
     .attr("width", svgWidth)
     .attr("height", svgHeight)
+
+var fulcrum = svg.append()
 
 // create svg container
 var graphContainer = svg.append("g").attr("id", "balanceBar")
@@ -205,4 +225,3 @@ function pathTweenLeft(path) {
             .attr("y", point.y - stemHeight + stemOffset)
     }
 }
-
