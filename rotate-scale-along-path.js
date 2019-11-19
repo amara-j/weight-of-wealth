@@ -110,7 +110,7 @@ graphContainer.append("circle")
     .attr("opacity", 1)
     // make mouseover of scale center interactive, so it feels like a button
     .on("mouseover", function () {
-        d3.select(this).attr("fill", "red")
+        d3.select(this).attr("fill", "purple")
     })
     .on("mouseout", function () {
         d3.select(this).attr("fill", "black");

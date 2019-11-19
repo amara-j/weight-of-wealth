@@ -10,8 +10,6 @@ var padding = 20
 
         // determine the ratio between the variables
         compareRatio = Math.ceil(billionaireWorth / compareWorth)
-        console.log(compareRatio)
-
 
         // to make the comparison scalable, create scale with billionaire worth as upper limit
         var angleScale = d3.scaleLinear()
@@ -42,10 +40,7 @@ var padding = 20
             //When clicked, should select off-screen circles and
             // eventially make them fall onto the scale
             .on("click", function() {
-               makeIcons(billionaireWorth, "L", 1) 
-         })
-
-            .on("click", function () {
+               makeIcons(billionaireWorth, "L", 1)
                 for (i = 0; i < compareRatio; i += 1) {
                     makeIcons(compareWorth, "R", i)
                 }
@@ -55,7 +50,6 @@ var padding = 20
         // call the makeIcons function for billionaire
         // specify sides "L" and "R" so billionaire is always on left side,
         // and comparison variable always on right.
-         makeIcons(billionaireWorth, "L", 0)
 
         // define function to make icons
         function makeIcons(weight, side, i) {
@@ -66,6 +60,7 @@ var padding = 20
                         return 200
                     }
                     // put comparison icon on right side of screen
+                    // stack the icons, regardless of how many there
                     // else { return xRect + w - 5 * padding - iconRadiusScale(weight) / 2 + i % 5 * 2 * (iconRadiusScale(weight)) }
                     else { return xRect + w - 5 * padding - iconRadiusScale(weight) / 2 + i % 5 * 2 * (iconRadiusScale(weight)) }
                 })
@@ -95,8 +90,6 @@ var padding = 20
 
             d3.select("#billiIcon")
                 .transition()
-                .delay(1000)
                 .duration(1000)
                 .attr("transform", "translate(0,400)")
-
         };
