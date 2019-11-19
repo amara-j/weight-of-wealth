@@ -140,23 +140,6 @@ graphContainer.append("circle")
     .attr("cy", 0)
     .attr("r", centerCircleRadius)
     .attr("opacity", 1)
-    // make mouseover of scale center interactive, so it feels like a button
-    .on("mouseover", function () {
-        d3.select(this).attr("fill", "purple")
-    })
-    .on("mouseout", function () {
-        d3.select(this).attr("fill", "black");
-    })
-    // when scale center is clicked, turn scale by rotateAngle parameter
-    // can change this parameter above
-    .on("click", function () {
-
-        makeIcons(billionaireWorth, "L", 1)
-        for (i = 0; i < compareRatio; i += 1) {
-            makeIcons(compareWorth, "R", i)
-        }
-    })
-
 
 function rotateArms(rotateAngle) {
     // rotate left arm of scale
