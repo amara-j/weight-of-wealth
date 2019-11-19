@@ -6,8 +6,9 @@ var rotateAngle = -45
 var centerCircleRadius = 10
 var stemHeight = 60
 var stemWidth = 4
-var plateHeight = 4
+var plateHeight = 10
 var plateWidth = 110
+var armHeight = 5
 var stemOffset = 3 // makes it look more like the stems are really attached to the scale– there is a tiny gap otherwise
 
 // -- new vars -- 
@@ -53,7 +54,7 @@ rightArm = graphContainer.append('rect')
     .attr('x', 0)
     .attr('y', 0)
     .attr('width', svgWidth / 4)
-    .attr('height', 2)
+    .attr('height', armHeight)
     .attr('id', 'rightArm')
 
 // draw left arm of scale
@@ -61,7 +62,7 @@ leftArm = graphContainer.append('rect')
     .attr('x', -svgWidth / 4)
     .attr('y', 0)
     .attr('width', svgWidth / 4)
-    .attr('height', 2)
+    .attr('height', armHeight)
     .attr('id', 'leftArm')
 
 // create small svg container for stem and plate unit on left side
@@ -245,7 +246,7 @@ function makeIcons(weight, side, i) {
             }
             // put comparison icon on right side of screen
             // stack the icons, regardless of how many there are
-            else { return doubleArmLength - 5 * padding - iconRadiusScale(weight) / 2 + i % 5 * 2 * (iconRadiusScale(weight)) }
+            else { return 1.5 * doubleArmLength + i % 5 * 2 * (iconRadiusScale(weight)) }
         })
         // assign each icon an ID
         .attr("id", function () {
@@ -256,7 +257,8 @@ function makeIcons(weight, side, i) {
             // the comparison icons get numbered ids like "compareIcon3"
             else { return "compareIcon" + i }
         })
-        .attr("cy", Math.floor(i / 5) * 2 * (iconRadiusScale(weight)))
+         .attr("cy", Math.floor(i / 5) * 2 * (iconRadiusScale(weight)))
+        //.attr("cy", svgHeight / 2 - stemHeight + stemOffset)
         .attr("fill", "gold")
         .attr("r", iconRadiusScale(weight))
         .on("click", function () {
@@ -269,10 +271,25 @@ function makeIcons(weight, side, i) {
         .delay(1000 * Math.random())
         .duration(1000)
         .attr("fill", "blue")
-        .attr("transform", "translate(0,400)")
+        .attr("transform", "translate(0,250)")
 
     d3.select("#billiIcon")
         .transition()
         .duration(1000)
-        .attr("transform", "translate(0,400)")
+        .attr("transform", "translate(0,270)")
 };
+
+// TO DO TUES AM
+
+// make icons travel with the scale once they drop onto it
+// using a transition.end() to trigger scale rotation once icons falling transition ends?
+// but then the icons still need to move with the scale.  
+
+// when icons pile up, remainder should be on top, not bottom
+// (looks weird for whole pile to be balancing on one ball)
+
+// Make list of exactly which variables S needs to pass into this code for integration
+
+// Shouldn't be able to click center of scale button more than once
+
+// style scale
