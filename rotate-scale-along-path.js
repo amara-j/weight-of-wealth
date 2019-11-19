@@ -2,12 +2,12 @@
 
 var svgWidth = 800
 var svgHeight = 800
-var rotateAngle = 45
+var rotateAngle = -45
 var centerCircleRadius = 10
 var stemHeight = 60
 var stemWidth = 4
 var plateHeight = 4
-var plateWidth = 80
+var plateWidth = 110
 var stemOffset = 3
 //stem offset makes it look more like the stems are really attached to the scale– there is a tiny gap otherwise
 
@@ -123,14 +123,6 @@ var leftPlate = leftContainer.append("rect")
 // create small svg container for stem+plate unit on right side
 var rightContainer = svg.append("g")
 
-// try to make Right and Left tweening functions into one,
-// with parameter of what you select like "#rightStem"
-// the only other difference: one starts at 1/4, one at 3/4
-// make a variable from the thing that is now called r 
-// interpolateRight = d3.interpolate(length / 4, length / 4 + length * rotateAngle / 360)
-//  and var interpolateLeft  = d3.interpolate(length * 3 / 4, length * 3 / 4 + length * rotateAngle / 360)
-// the one tweening function accepts parameters 
-// interpolating path, ID of element to select & operate on
 
 // draw right stem and assign it a starting position
 var rightStem = rightContainer.append("rect")
@@ -189,6 +181,7 @@ function pathTweenRight(path) {
     }
 }
 
+// do basically the same thing with some small coordinate changes for the left side
 function pathTweenLeft(path) {
     var length = path.node().getTotalLength();
     var r = d3.interpolate(length * 3 / 4, length * 3 / 4 + length * rotateAngle / 360);
@@ -207,3 +200,4 @@ function pathTweenLeft(path) {
             .attr("y", point.y - stemHeight + stemOffset)
     }
 }
+
