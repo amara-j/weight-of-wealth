@@ -15,7 +15,7 @@ var stemOffset = 3 // makes it look more like the stems are really attached to t
 var padding = 20
 var doubleArmLength = svgWidth / 2
 // ------------------------ these numbers are selection variable being fed in from sharvari's code
-var billionaireWorth = 70300000000 
+var billionaireWorth = 70300000000
 var compareWorth = 2762628933
 // --------------------------------//
 
@@ -121,41 +121,6 @@ graphContainer.append("circle")
     // when scale center is clicked, turn scale by rotateAngle parameter
     // can change this parameter above
     .on("click", function () {
-        // rotate left arm of scale
-        d3.select("#leftArm")
-            .transition()
-            .duration(10000)
-            .attr("transform", "rotate(" + rotateAngle + " 0 0)");
-
-        // rotate right arm of scale
-        d3.select("#rightArm")
-            .transition()
-            .duration(10000)
-            .attr("transform", "rotate(" + rotateAngle + " 0 0)");
-
-        d3.select("#leftStem")
-            .transition()
-            .duration(10000)
-            // call the tweening function to update new position
-            .tween("pathTween", function () { return pathTweenLeft(path) })
-
-        d3.select("#leftPlate")
-            .transition()
-            .duration(10000)
-            // call the tweening function to update new position
-            .tween("pathTween", function () { return pathTweenLeft(path) })
-
-        d3.select("#rightStem")
-            .transition()
-            .duration(10000)
-            // call the tweening function to update new position
-            .tween("pathTween", function () { return pathTweenRight(path) })
-
-        d3.select("#rightPlate")
-            .transition()
-            .duration(10000)
-            // call the tweening function to update new position
-            .tween("pathTween", function () { return pathTweenRight(path) })
 
         makeIcons(billionaireWorth, "L", 1)
         for (i = 0; i < compareRatio; i += 1) {
@@ -163,6 +128,45 @@ graphContainer.append("circle")
         }
     })
 
+
+function rotateArms(rotateAngle) {
+    // rotate left arm of scale
+    d3.select("#leftArm")
+        .transition()
+        .duration(10000)
+        .attr("transform", "rotate(" + rotateAngle + " 0 0)");
+
+    // rotate right arm of scale
+    d3.select("#rightArm")
+        .transition()
+        .duration(10000)
+        .attr("transform", "rotate(" + rotateAngle + " 0 0)");
+
+    d3.select("#leftStem")
+        .transition()
+        .duration(10000)
+        // call the tweening function to update new position
+        .tween("pathTween", function () { return pathTweenLeft(path) })
+
+    d3.select("#leftPlate")
+        .transition()
+        .duration(10000)
+        // call the tweening function to update new position
+        .tween("pathTween", function () { return pathTweenLeft(path) })
+
+    d3.select("#rightStem")
+        .transition()
+        .duration(10000)
+        // call the tweening function to update new position
+        .tween("pathTween", function () { return pathTweenRight(path) })
+
+    d3.select("#rightPlate")
+        .transition()
+        .duration(10000)
+        // call the tweening function to update new position
+        .tween("pathTween", function () { return pathTweenRight(path) })
+
+}
 
 //generate a series of nodes around the circle
 // visualize them with circles to be sure it's working as it should
@@ -231,9 +235,11 @@ function pathTweenLeft(path) {
         d3.select("#leftPlate")
             .attr("x", point.x - plateWidth / 2)
             .attr("y", point.y - stemHeight + stemOffset)
+        d3.select("#billiIcon")
+            .attr("cx", point.x)
+            .attr("cy", point.y - 2 * stemHeight + stemOffset - svgWidth / 4 - 70 - plateHeight)
     }
 }
-
 
 
 // define makeIcons function
@@ -257,7 +263,7 @@ function makeIcons(weight, side, i) {
             // the comparison icons get numbered ids like "compareIcon3"
             else { return "compareIcon" + i }
         })
-         .attr("cy", Math.floor(i / 5) * 2 * (iconRadiusScale(weight)))
+        .attr("cy", Math.floor(i / 5) * 2 * (iconRadiusScale(weight)))
         //.attr("cy", svgHeight / 2 - stemHeight + stemOffset)
         .attr("fill", "gold")
         .attr("r", iconRadiusScale(weight))
@@ -277,7 +283,11 @@ function makeIcons(weight, side, i) {
         .transition()
         .duration(1000)
         .attr("transform", "translate(0,270)")
+        .on("end", function () {
+            rotateArms(rotateAngle)
+        })
 };
+
 
 // TO DO TUES AM
 
