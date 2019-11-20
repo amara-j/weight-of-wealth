@@ -1,7 +1,9 @@
 // these are all modifiable parameters to change dimensions in visualization
+// initialize current angle to 0
+currentAngle = 0
+
 var svgWidth = 800
 var svgHeight = 800
-//var rotateAngle = -45
 var centerCircleRadius = 10
 var stemHeight = 60
 var stemWidth = 4
@@ -22,7 +24,7 @@ var compareWorth = 2762628933
 // determine the ratio between the variables
 //compareRatio = Math.ceil(billionaireWorth / compareWorth)
 // for now we'll just use a constant compare ratio
-var compareRatio = 8
+var compareRatio = 10
 
 // to make the comparison scalable, create scale with billionaire worth as upper limit
 var angleScale = d3.scaleLinear()
@@ -34,9 +36,6 @@ var iconRadiusScale = d3.scaleLinear()
     .range([10, 70]);
 
 iconRadiusScale(2762628933)
-
-// first rotateAngle = - angleScale(billionaireWorth)
-// then rotateAngle = angleScale(compareWorth)
 
 var svg = d3.select("#graph").append("svg")
     .attr("width", svgWidth)
@@ -114,11 +113,11 @@ var leftPlate = leftContainer.append("rect")
     .attr("fill", "black")
     .on("click", function () {
         leftPlateClickCount += 1;
+        console.log("left plate click count =", leftPlateClickCount)
         if (leftPlateClickCount <= 1) {
             makeIcons(billionaireWorth, "L", 1)
-            rotateArms(angleScale(billionaireWorth))
+            rotateArms(leftRotateAngle)
             dropBilliIcon()
-            console.log("left plate click count =", leftPlateClickCount)
         }
         else if (leftPlateClickCount > 1) { (console.log("no more clicks left!")) }
     })
@@ -144,19 +143,19 @@ var rightPlate = rightContainer.append("rect")
     .attr("fill", "black")
     .on("click", function () {
         rightPlateClickCount += 1;
+        console.log("right plate click count =", rightPlateClickCount)
         if (rightPlateClickCount <= 1)
             for (i = 0; i < compareRatio; i += 1) {
                 makeIcons(compareWorth, "R", i)
             }
         if (rightPlateClickCount <= compareRatio) {
-            dropCompareIcon(rightPlateClickCount)
-            console.log("should be turning", angleScale(billionaireWorth))
+            rotateArms(rightRotateAngle)
+            dropCompareIcon(rightPlateClickCount -1)
         }
         else if (rightPlateClickCount >= compareRatio) {
             (console.log("no more clicks left!"))
         }
     })
-// })
 
 //initialize counter for clicking
 leftPlateClickCount = 0
@@ -173,39 +172,26 @@ graphContainer.append("circle")
 // when scale center is clicked, turn scale by rotateAngle parameter
 // can change this parameter above
 
-// first task: 
-// make a "current angle" variable that interactively updates on click
-// the question being, how turned is the scale right now?
-// on click on left, current angle = current angle + angleScale(billionaireWeight))
-// on click on left, current angle = current angle - angleScale(billionaireWeight)
-// so current angle ranges from 45 to -45
+//Right now, scale breaks apart if you click on the right plate more than once
+// because it resets to interpolate from its original position,
+// instead of updating to interpolate from its current position to its next position
+// I think i need to do something with variables like this,
+// where it has an updating current angle that it references in interpolate function?
 
+leftRotateAngle = -angleScale(billionaireWorth)
+//rightRotateAngle = angleScale(compareWorth)
+rightRotateAngle = 10
 
-current_angle = 0
-rotateAngle = 45
-
-lStartDeg = 270
-lEndDeg = lStartDeg + rotateAngle
-
-rStartDeg = 90
-rEndDeg = rStartDeg + rotateAngle
-
-current_angle = current_angle + rotateAngle
-console.log(current_angle)
-
-// makeIcons(billionaireWorth, "L", 1)
-//for (i = 0; i < compareRatio; i += 1) {
-//makeIcons(compareWorth, "R", 1)
-//}
-
-//for (i = 0; i < compareRatio; i += 1) {
-
-
-//dropCompareIcon(compareWorth, "R", 1)
-//}
-
+//rStartDeg = 90
+//lStartDeg = 270
 
 function rotateArms(rotateAngle) {
+    lEndDeg = 270 + rotateAngle
+    rEndDeg = 90 + rotateAngle
+
+console.log("current angle is ", currentAngle)
+console.log("rotating by", rotateAngle, "degrees...")
+    
     // rotate left arm of scale
     d3.select("#leftArm")
         .transition()
@@ -222,25 +208,28 @@ function rotateArms(rotateAngle) {
         .transition()
         .duration(10000)
         // call the tweening function to update new position
-        .tween("pathTween", function () { return pathTweenLeft(path, lStartDeg, lEndDeg) })
+        .tween("pathTween", function () { return pathTweenLeft(path, 270, lEndDeg) })
 
     d3.select("#leftPlate")
         .transition()
         .duration(10000)
         // call the tweening function to update new position
-        .tween("pathTween", function () { return pathTweenLeft(path, lStartDeg, lEndDeg) })
+        .tween("pathTween", function () { return pathTweenLeft(path, 270, lEndDeg) })
 
     d3.select("#rightStem")
         .transition()
         .duration(10000)
         // call the tweening function to update new position
-        .tween("pathTween", function () { return pathTweenRight(path, rStartDeg, rEndDeg) })
+        .tween("pathTween", function () { return pathTweenRight(path, 90, rEndDeg) })
 
     d3.select("#rightPlate")
         .transition()
         .duration(10000)
         // call the tweening function to update new position
-        .tween("pathTween", function () { return pathTweenRight(path, rStartDeg, rEndDeg) })
+        .tween("pathTween", function () { return pathTweenRight(path, 90, rEndDeg) })
+
+currentAngle = currentAngle + rotateAngle
+console.log("updated angle=", currentAngle)
 
 }
 
@@ -303,6 +292,8 @@ function pathTweenRight(path, startDeg, endDeg) {
 }
 
 // do basically the same thing with some small coordinate changes for the left side
+
+// should current angle & everything be going in here??
 function pathTweenLeft(path, startDeg, endDeg) {
     var length = path.node().getTotalLength();
     var interpolationFn = d3.interpolate(length * startDeg / 360, length * endDeg / 360);
@@ -322,7 +313,6 @@ function pathTweenLeft(path, startDeg, endDeg) {
 }
 
 
-// define makeIcons function
 function makeIcons(weight, side, i) {
     svg.append('circle')
         .attr("cx", function () {
@@ -349,8 +339,8 @@ function makeIcons(weight, side, i) {
         })
         .attr("cy", function () {
             if (side == "R") {
-               // return Math.floor(i / 5) * (iconRadiusScale(weight) - stemHeight - plateHeight - stemOffset)
-                return i % 5 * (iconRadiusScale(weight) - stemHeight - plateHeight - stemOffset)
+                return 3* Math.floor(i / 4) * (iconRadiusScale(weight) + doubleArmLength - stemHeight - plateHeight - stemOffset)
+                 //return i % 4 * (iconRadiusScale(weight))
             }
             else {
                 return (-iconRadiusScale(weight))
@@ -367,14 +357,10 @@ function makeIcons(weight, side, i) {
 function dropCompareIcon(i) {
     d3.select("#compareIcon" + i)
         .transition()
-        // delay falling icons to their own randomized times
-        //.delay(4000 + 1000 * Math.random())
         .duration(1000)
         .attr("fill", "blue")
        // .attr("transform", "translate(0," + (doubleArmLength - Math.floor(i / 5) * 2 * (iconRadiusScale(compareWorth))) + ")")
        .attr("transform", "translate(0," + (doubleArmLength/2 + iconRadiusScale(compareWorth)) + ")")
-    console.log("rotateAngle =", rotateAngle)
-    rotateArms(rotateAngle)
 }
 
 function dropBilliIcon() {
@@ -382,8 +368,7 @@ function dropBilliIcon() {
         .transition()
         .duration(1000)
         .attr("transform", "translate(0," + (doubleArmLength / 2 + iconRadiusScale(billionaireWorth)) + ")")
-    console.log("rotateAngle =", rotateAngle)
-    rotateArms(rotateAngle)
+       //.attr("transform", "translate(0," + (-3* Math.floor(i / 4) * (iconRadiusScale(weight)) + ")"))
 };
 
 // style scale
