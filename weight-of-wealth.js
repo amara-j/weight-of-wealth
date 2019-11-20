@@ -46,11 +46,11 @@ var graphContainer = svg.append("g").attr("id", "balanceBar")
     .attr("transform", "translate(" + svgWidth / 2 + "," + svgHeight / 2 + ")")
 
 //draw circle– turning scale should move along this as a path           
-graphContainer.append("circle")
-    .attr("cx", 0)
-    .attr("cy", 0)
-    .attr("r", svgWidth / 4)
-    .attr("opacity", .1)
+// graphContainer.append("circle")
+//     .attr("cx", 0)
+//     .attr("cy", 0)
+//     .attr("r", svgWidth / 4)
+//     .attr("opacity", .1)
 
 // draw right arm of scale     
 rightArm = graphContainer.append('rect')
@@ -123,10 +123,10 @@ var rightPlate = rightContainer.append("rect")
                 makeIcons(compareWorth, "R", i)
             }
         if (rightPlateClickCount <= compareRatio) {
-             dropCompareIcon(rightPlateClickCount) 
-             rotateArms(angleScale(compareWorth))
-             console.log("should be turning", angleScale(billionaireWorth))
-            }
+            dropCompareIcon(rightPlateClickCount)
+            rotateArms(angleScale(compareWorth))
+            console.log("should be turning", angleScale(billionaireWorth))
+        }
         else if (rightPlateClickCount >= compareRatio) {
             (console.log("no more clicks left!"))
         }
@@ -144,16 +144,16 @@ graphContainer.append("circle")
     .attr("cy", 0)
     .attr("r", centerCircleRadius)
     .attr("opacity", 1)
-    // make mouseover of scale center interactive, so it feels like a button
-    .on("mouseover", function () {
-        d3.select(this).attr("fill", "purple")
-    })
-    .on("mouseout", function () {
-        d3.select(this).attr("fill", "black");
-    })
+
 // when scale center is clicked, turn scale by rotateAngle parameter
 // can change this parameter above
 
+// first task: 
+// make a "current angle" variable that interactively updates on click
+// the question being, how turned is the scale right now?
+// on click on left, current angle = current angle + angleScale(billionaireWeight))
+// on click on left, current angle = current angle - angleScale(billionaireWeight)
+// so current angle ranges from 45 to -45
 
 
 current_angle = 0
@@ -170,13 +170,13 @@ console.log(current_angle)
 
 // makeIcons(billionaireWorth, "L", 1)
 //for (i = 0; i < compareRatio; i += 1) {
-makeIcons(compareWorth, "R", 1)
+//makeIcons(compareWorth, "R", 1)
 //}
 
 //for (i = 0; i < compareRatio; i += 1) {
 
 
-dropCompareIcon(compareWorth, "R", 1)
+//dropCompareIcon(compareWorth, "R", 1)
 //}
 
 
@@ -235,11 +235,6 @@ function createNodes(numNodes, radius) {
         x = (radius * Math.cos(angle)) + (width / 2);
         y = (radius * Math.sin(angle)) + (width / 2);
         nodes.push([x, y]);
-        svg.append("circle")
-            .attr("cx", x)
-            .attr("cy", y)
-            .attr("fill", "purple")
-            .attr("r", 3)
     }
     return nodes;
 }
@@ -352,6 +347,8 @@ function dropCompareIcon(i) {
         .duration(1000)
         .attr("fill", "blue")
         .attr("transform", "translate(0," + (doubleArmLength - Math.floor(i / 5) * 2 * (iconRadiusScale(compareWorth))) + ")")
+    console.log("rotateAngle =", rotateAngle)
+    rotateArms(rotateAngle)
 }
 
 
@@ -360,10 +357,9 @@ function dropBilliIcon() {
         .transition()
         .duration(1000)
         .attr("transform", "translate(0," + (doubleArmLength / 2 + iconRadiusScale(billionaireWorth)) + ")")
+    console.log("rotateAngle =", rotateAngle)
     rotateArms(rotateAngle)
 };
-
-// Shouldn't be able to click center of scale button more than once
 
 // style scale
 
