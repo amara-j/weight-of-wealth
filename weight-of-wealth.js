@@ -1,5 +1,4 @@
 // these are all modifiable parameters to change dimensions in visualization
-
 var svgWidth = 800
 var svgHeight = 800
 //var rotateAngle = -45
@@ -10,18 +9,20 @@ var plateHeight = 10
 var plateWidth = 110
 var armHeight = 5
 var stemOffset = 3 // makes it look more like the stems are really attached to the scale– there is a tiny gap otherwise
-
-// -- new vars -- 
+var fulcrumWidth = 20
 var padding = 20
 var doubleArmLength = svgWidth / 2
-// ------------------------ these numbers are selection variable being fed in from sharvari's code
+
+// ------------------------ these numbers are selection variable 
+// they will eventually be fed in from sharvari's code, read from csv
 var billionaireWorth = 70300000000
 var compareWorth = 2762628933
 // --------------------------------//
 
 // determine the ratio between the variables
 //compareRatio = Math.ceil(billionaireWorth / compareWorth)
-var compareRatio = 40
+// for now we'll just use a constant compare ratio
+var compareRatio = 8
 
 // to make the comparison scalable, create scale with billionaire worth as upper limit
 var angleScale = d3.scaleLinear()
@@ -67,6 +68,31 @@ leftArm = graphContainer.append('rect')
     .attr('width', svgWidth / 4)
     .attr('height', armHeight)
     .attr('id', 'leftArm')
+
+// draw fulcrum of scale
+fulcrumLeft = graphContainer.append('line')
+    .attr('x1', -fulcrumWidth / 2)
+    .attr('y1', doubleArmLength / 2* Math.cos(Math.PI/4))
+    .attr('x2', -2)
+    .attr('y2', 0)
+    .attr('stroke-width', 4)
+    .attr('stroke', "black")
+
+fulcrumRight = graphContainer.append('line')
+    .attr('x1', fulcrumWidth / 2)
+    .attr('y1', doubleArmLength / 2* Math.cos(Math.PI/4))
+    .attr('x2', 2)
+    .attr('y2', 0)
+    .attr('stroke-width', 4)
+    .attr('stroke', "black")
+
+floor = graphContainer.append('line')
+    .attr('x1', -doubleArmLength/2)
+    .attr('y1', doubleArmLength / 2* Math.cos(Math.PI/4))
+    .attr('x2', doubleArmLength/2)
+    .attr('y2', doubleArmLength / 2* Math.cos(Math.PI/4))
+    .attr('stroke-width', 4)
+    .attr('stroke', "black")
 
 // create small svg container for stem and plate unit on left side
 var leftContainer = svg.append("g")
@@ -124,7 +150,6 @@ var rightPlate = rightContainer.append("rect")
             }
         if (rightPlateClickCount <= compareRatio) {
             dropCompareIcon(rightPlateClickCount)
-            rotateArms(angleScale(compareWorth))
             console.log("should be turning", angleScale(billionaireWorth))
         }
         else if (rightPlateClickCount >= compareRatio) {
@@ -157,7 +182,7 @@ graphContainer.append("circle")
 
 
 current_angle = 0
-rotateAngle = -45
+rotateAngle = 45
 
 lStartDeg = 270
 lEndDeg = lStartDeg + rotateAngle
@@ -249,7 +274,6 @@ var path = svg.append("path")
     .style("fill", "none");
 
 
-
 function pathTweenRight(path, startDeg, endDeg) {
     var length = path.node().getTotalLength();
     // Get the length of the path
@@ -325,7 +349,8 @@ function makeIcons(weight, side, i) {
         })
         .attr("cy", function () {
             if (side == "R") {
-                return - Math.floor(i / 5) * (iconRadiusScale(weight) - stemHeight - plateHeight - stemOffset)
+               // return Math.floor(i / 5) * (iconRadiusScale(weight) - stemHeight - plateHeight - stemOffset)
+                return i % 5 * (iconRadiusScale(weight) - stemHeight - plateHeight - stemOffset)
             }
             else {
                 return (-iconRadiusScale(weight))
@@ -346,11 +371,11 @@ function dropCompareIcon(i) {
         //.delay(4000 + 1000 * Math.random())
         .duration(1000)
         .attr("fill", "blue")
-        .attr("transform", "translate(0," + (doubleArmLength - Math.floor(i / 5) * 2 * (iconRadiusScale(compareWorth))) + ")")
+       // .attr("transform", "translate(0," + (doubleArmLength - Math.floor(i / 5) * 2 * (iconRadiusScale(compareWorth))) + ")")
+       .attr("transform", "translate(0," + (doubleArmLength/2 + iconRadiusScale(compareWorth)) + ")")
     console.log("rotateAngle =", rotateAngle)
     rotateArms(rotateAngle)
 }
-
 
 function dropBilliIcon() {
     d3.select("#billiIcon")
