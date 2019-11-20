@@ -76,14 +76,14 @@ graphContainer.append("circle")
 // draw fulcrum of scale
 fulcrumLeft = graphContainer.append('line')
     .attr('x1', -fulcrumWidth / 2)
-    .attr('y1', doubleArmLength / 2* Math.cos(Math.PI/4))
+    .attr('y1', doubleArmLength / 2 * Math.cos(Math.PI / 4))
     .attr('x2', -2)
     .attr('y2', 0)
     .attr('stroke-width', 4)
     .attr('stroke', "black")
 fulcrumRight = graphContainer.append('line')
     .attr('x1', fulcrumWidth / 2)
-    .attr('y1', doubleArmLength / 2* Math.cos(Math.PI/4))
+    .attr('y1', doubleArmLength / 2 * Math.cos(Math.PI / 4))
     .attr('x2', 2)
     .attr('y2', 0)
     .attr('stroke-width', 4)
@@ -91,10 +91,10 @@ fulcrumRight = graphContainer.append('line')
 
 // draw the floor
 floor = graphContainer.append('line')
-    .attr('x1', -doubleArmLength/2)
-    .attr('y1', doubleArmLength / 2* Math.cos(Math.PI/4))
-    .attr('x2', doubleArmLength/2)
-    .attr('y2', doubleArmLength / 2* Math.cos(Math.PI/4))
+    .attr('x1', -doubleArmLength / 2)
+    .attr('y1', doubleArmLength / 2 * Math.cos(Math.PI / 4))
+    .attr('x2', doubleArmLength / 2)
+    .attr('y2', doubleArmLength / 2 * Math.cos(Math.PI / 4))
     .attr('stroke-width', 4)
     .attr('stroke', "black")
 
@@ -155,17 +155,17 @@ var rightPlate = rightContainer.append("rect")
         rightPlateClickCount += 1;
         console.log("right plate click count =", rightPlateClickCount)
         if (rightPlateClickCount <= 1)
-        // the first time it's clicked, generate the number of icons that would balance scale
+            // the first time it's clicked, generate the number of icons that would balance scale
             for (i = 0; i < compareRatio; i += 1) {
                 makeIcons(compareWorth, "R", i)
             }
         if (rightPlateClickCount <= compareRatio) {
             // drop an icon each time it's clicked, until there are no more icons left
-            dropCompareIcon(rightPlateClickCount -1)
-             // rotate arms each time an icon is dropped
+            dropCompareIcon(rightPlateClickCount - 1)
+            // rotate arms each time an icon is dropped
             rotateArms(rightRotateAngle)
         }
-    // don't allow it to interact further once there are no more icons left to drop
+        // don't allow it to interact further once there are no more icons left to drop
         else if (rightPlateClickCount >= compareRatio) {
             (console.log("no more clicks left!"))
         }
@@ -188,9 +188,9 @@ function rotateArms(rotateAngle) {
     lEndDeg = 270 + rotateAngle
     rEndDeg = 90 + rotateAngle
 
-console.log("current angle is ", currentAngle)
-console.log("rotating by", rotateAngle, "degrees...")
-    
+    console.log("current angle is ", currentAngle)
+    console.log("rotating by", rotateAngle, "degrees...")
+
     // rotate left arm of scale
     d3.select("#leftArm")
         .transition()
@@ -227,8 +227,8 @@ console.log("rotating by", rotateAngle, "degrees...")
         // call the tweening function to update new position
         .tween("pathTween", function () { return pathTweenRight(path, 90, rEndDeg) })
 
-currentAngle = currentAngle + rotateAngle
-console.log("updated angle=", currentAngle)
+    currentAngle = currentAngle + rotateAngle
+    console.log("updated angle=", currentAngle)
 
 }
 
@@ -331,14 +331,15 @@ function makeIcons(weight, side, i) {
         })
         .attr("cy", function () {
             if (side == "R") {
-                return 3* Math.floor(i / 4) * (iconRadiusScale(weight) + doubleArmLength - stemHeight - plateHeight - stemOffset)
+                return 3 * Math.floor(i / 4) * (iconRadiusScale(weight) + doubleArmLength - stemHeight - plateHeight - stemOffset)
             }
             else {
                 return (-iconRadiusScale(weight))
             }
         })
-        
 
+
+        
         // perfect y for icons to fall to: doubleArmLength - stemHeight - plateHeight
         .attr("fill", "gold")
         .attr("r", iconRadiusScale(weight))
@@ -349,8 +350,8 @@ function dropCompareIcon(i) {
         .transition()
         .duration(1000)
         .attr("fill", "blue")
-       // .attr("transform", "translate(0," + (doubleArmLength - Math.floor(i / 5) * 2 * (iconRadiusScale(compareWorth))) + ")")
-       .attr("transform", "translate(0," + (doubleArmLength/2 + iconRadiusScale(compareWorth)) + ")")
+        // .attr("transform", "translate(0," + (doubleArmLength - Math.floor(i / 5) * 2 * (iconRadiusScale(compareWorth))) + ")")
+        .attr("transform", "translate(0," + (doubleArmLength / 2 + iconRadiusScale(compareWorth)) + ")")
 }
 
 function dropBilliIcon() {
@@ -358,5 +359,5 @@ function dropBilliIcon() {
         .transition()
         .duration(1000)
         .attr("transform", "translate(0," + (doubleArmLength / 2 + iconRadiusScale(billionaireWorth)) + ")")
-       //.attr("transform", "translate(0," + (-3* Math.floor(i / 4) * (iconRadiusScale(weight)) + ")"))
+    //.attr("transform", "translate(0," + (-3* Math.floor(i / 4) * (iconRadiusScale(weight)) + ")"))
 };
