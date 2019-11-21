@@ -7,7 +7,7 @@ var stemWidth = 4
 var plateHeight = 10
 var plateWidth = 110
 var armHeight = 5
-var stemOffset = 3 // makes it look more like the stems are really attached to the scale– there is a tiny gap otherwise
+var stemOffset = 5 // makes it look more like the stems are really attached to the scale– there is a tiny gap otherwise
 var fulcrumWidth = 20
 var padding = 20
 var doubleArmLength = svgWidth / 2
@@ -26,7 +26,7 @@ leftPlateClickCount = 0
 rightPlateClickCount = 0
 
 // determine the ratio between the variables
- compareRatio = Math.ceil(billionaireWorth / compareWorth)
+compareRatio = Math.ceil(billionaireWorth / compareWorth)
 
 // to make the comparison scalable, create scale with billionaire worth as upper limit
 var angleScale = d3.scaleLinear()
@@ -118,7 +118,6 @@ var leftPlate = leftContainer.append("rect")
     .on("click", function () {
         // keep track of how many times it has been clicked 
         leftPlateClickCount += 1;
-        console.log("left plate click count =", leftPlateClickCount)
         if (leftPlateClickCount <= 1) {
             // the first time it's clicked, create & drop the billionaire icon
             makeIcons(billionaireWorth, "L", 1)
@@ -151,7 +150,6 @@ var rightPlate = rightContainer.append("rect")
     .on("click", function () {
         // keep track of how many times it has been clicked
         rightPlateClickCount += 1;
-        console.log("right plate click count =", rightPlateClickCount)
         if (rightPlateClickCount <= 1)
             // the first time it's clicked, generate the number of icons that would balance scale
             for (i = 0; i < compareRatio; i += 1) {
@@ -169,11 +167,6 @@ var rightPlate = rightContainer.append("rect")
         }
     })
 
-//Right now, scale breaks apart if you click on the right plate more than once
-// because it resets to interpolate from its original position,
-// instead of updating to interpolate from its current position to its next position
-// this is probably something to do with tweening and interpolation
-
 leftRotateAngle = -angleScale(billionaireWorth)
 
 rightRotateAngle = angleScale(compareWorth)
@@ -182,17 +175,13 @@ rightRotateAngle = angleScale(compareWorth)
 
 var currentRotation = 0
 function rotateArms(rotateAngle) {
-    console.log("rotate by ",rotateAngle)
-    
-    lStartDeg = 270+currentAngle
-    lEndDeg = 270 +currentAngle+ rotateAngle
-    rStartDeg = 90+currentAngle
-    rEndDeg = 90+currentAngle + rotateAngle
 
-    currentRotation =  currentRotation+rotateAngle
-    console.log("current angle is ", currentAngle)
-    console.log("rotating by", rotateAngle, "degrees...")
-    console.log("rotated at ", currentRotation, "degrees...")
+    lStartDeg = 270 + currentAngle
+    lEndDeg = 270 + currentAngle + rotateAngle
+    rStartDeg = 90 + currentAngle
+    rEndDeg = 90 + currentAngle + rotateAngle
+
+    currentRotation = currentRotation + rotateAngle
 
     // rotate left arm of scale
     d3.select("#leftArm")
@@ -231,7 +220,6 @@ function rotateArms(rotateAngle) {
         .tween("pathTween", function () { return pathTweenRight(path, rStartDeg, rEndDeg) })
 
     currentAngle = currentAngle + rotateAngle
-    console.log("updated angle=", currentAngle)
 
 }
 
@@ -283,7 +271,7 @@ function pathTweenRight(path, startDeg, endDeg) {
             .each(function (d, i) {
                 d3.select(this)
                     .attr("cx", point.x + 2 * (i % 4) * iconRadiusScale(compareWorth) - plateWidth / 3)
-                    .attr("cy", point.y - stemHeight + stemOffset - doubleArmLength - plateHeight)
+                    .attr("cy", point.y - 25 * Math.floor(i / 4) + stemOffset - doubleArmLength - plateHeight - stemHeight)
             })
     }
 }
@@ -334,24 +322,25 @@ function makeIcons(weight, side, i) {
         })
         .attr("cy", function () {
             if (side == "R") {
-                return 3 * Math.floor(i / 4) * (iconRadiusScale(weight) + doubleArmLength - stemHeight - plateHeight - stemOffset)
+                console.log(i, ",y val is", 15 * Math.floor(i / 4) + (iconRadiusScale(weight) + doubleArmLength - stemHeight - plateHeight - stemOffset))
+                return 15 * Math.floor(i / 4) + (iconRadiusScale(weight) + doubleArmLength - stemHeight - plateHeight - stemOffset)
+                //return doubleArmLength
             }
             else {
                 return (-iconRadiusScale(weight))
             }
         })
-
-        // perfect y for icons to fall to: doubleArmLength - stemHeight - plateHeight
         .attr("fill", "gold")
         .attr("r", iconRadiusScale(weight))
 }
 
 function dropCompareIcon(i) {
+    console.log("translating down by", (doubleArmLength + 0.5 * iconRadiusScale(compareWorth) - plateHeight))
     d3.select("#compareIcon" + i)
         .transition()
         .duration(800)
         .ease(d3.easeBounce)
-        .attr("transform", "translate(0," + (doubleArmLength + 0.5*iconRadiusScale(compareWorth) - plateHeight) + ")")
+        .attr("transform", "translate(0," + (doubleArmLength + 0.5 * iconRadiusScale(compareWorth) - plateHeight) + ")")
 }
 
 function dropBilliIcon() {
@@ -360,5 +349,4 @@ function dropBilliIcon() {
         .duration(1000)
         .ease(d3.easeBounce)
         .attr("transform", "translate(0," + (doubleArmLength / 2 + iconRadiusScale(billionaireWorth)) + ")")
-    //.attr("transform", "translate(0," + (-3* Math.floor(i / 4) * (iconRadiusScale(weight)) + ")"))
 };
