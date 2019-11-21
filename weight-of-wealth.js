@@ -322,7 +322,6 @@ function makeIcons(weight, side, i) {
         })
         .attr("cy", function () {
             if (side == "R") {
-                console.log(i, ",y val is", 15 * Math.floor(i / 4) + (iconRadiusScale(weight) + doubleArmLength - stemHeight - plateHeight - stemOffset))
                 return 15 * Math.floor(i / 4) + (iconRadiusScale(weight) + doubleArmLength - stemHeight - plateHeight - stemOffset)
                 //return doubleArmLength
             }
@@ -335,7 +334,6 @@ function makeIcons(weight, side, i) {
 }
 
 function dropCompareIcon(i) {
-    console.log("translating down by", (doubleArmLength + 0.5 * iconRadiusScale(compareWorth) - plateHeight))
     d3.select("#compareIcon" + i)
         .transition()
         .duration(800)
