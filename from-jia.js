@@ -178,10 +178,11 @@ var rightPlate = rightContainer.append("rect")
 
 leftRotateAngle = -angleScale(billionaireWorth)
 
-rightRotateAngle = angleScale(compareWorth)
+//eventually, rightRotateAngle = angleScale(compareWorth)
+// for now, it is a constant because the other angle is too small to see visually whether scale is working
+rightRotateAngle = 10
 
 //rStartDeg = 90 and lStartDeg = 270 because of the coordinate system in the interpolation function
-
 var currentRotation = 0
 function rotateArms(rotateAngle) {
     console.log("rotate by ",rotateAngle)
@@ -195,6 +196,7 @@ function rotateArms(rotateAngle) {
     console.log("current angle is ", currentAngle)
     console.log("rotating by", rotateAngle, "degrees...")
     console.log("rotated at ", currentRotation, "degrees...")
+
 
     // rotate left arm of scale
     d3.select("#leftArm")
@@ -220,11 +222,12 @@ function rotateArms(rotateAngle) {
         // call the tweening function to update new position
         .tween("pathTween", function () { return pathTweenLeft(path, lStartDeg, lEndDeg) })
 
+
     d3.select("#rightStem")
         .transition()
         .duration(10000)
         // call the tweening function to update new position
-        .tween("pathTween", function () { return pathTweenRight(path, rStartDeg, rEndDeg) })
+        .tween("pathTween", function () { pathTweenRight(path, rStartDeg, rEndDeg)})
 
     d3.select("#rightPlate")
         .transition()
@@ -261,8 +264,8 @@ var points = createNodes(20, svgWidth / 4)
 var path = svg.append("path")
     .data([points])
     .attr("d", d3.line().curve(d3.curveCardinal))
-    //.style("stroke", "red")
-    .attr("opacity", 0)
+    .style("stroke", "red")
+    .attr("opacity", .3)
     .style("fill", "none");
 
 
@@ -274,6 +277,7 @@ function pathTweenRight(path, startDeg, endDeg) {
     //Set up interpolation from 0 to the path length
     return function (t) {
         var point = path.node().getPointAtLength(interpolationFn(t));
+        
         // Get the next point along the path
         d3.select("#rightStem")
             .attr("x", point.x - stemWidth / 2)
@@ -294,6 +298,8 @@ function pathTweenRight(path, startDeg, endDeg) {
 
 // should current angle & everything be going in here instead??
 function pathTweenLeft(path, startDeg, endDeg) {
+    console.log(startDeg, endDeg)
+    
     var length = path.node().getTotalLength();
     var interpolationFn = d3.interpolate(length * startDeg / 360, length * endDeg / 360);
     return function (t) {
@@ -320,7 +326,9 @@ function makeIcons(weight, side, i) {
             }
             // put comparison icon on right side of screen
             // stack the icons
-            else { return 1.5 * doubleArmLength - plateWidth / 2 + i % 4 * 2 * (iconRadiusScale(2762628933)) }
+            else { 
+                return 1.5 * doubleArmLength - plateWidth / 2 + i % 4 * 2 * (iconRadiusScale(2762628933)) 
+            }
         })
         // assign each icon an ID
         .attr("class", function () {
@@ -342,7 +350,6 @@ function makeIcons(weight, side, i) {
                 return (-iconRadiusScale(weight))
             }
         })
-
         // perfect y for icons to fall to: doubleArmLength - stemHeight - plateHeight
         .attr("fill", "gold")
         .attr("r", iconRadiusScale(weight))
@@ -351,8 +358,8 @@ function makeIcons(weight, side, i) {
 function dropCompareIcon(i) {
     d3.select("#compareIcon" + i)
         .transition()
-        .duration(800)
-        .ease(d3.easeBounce)
+        .duration(1000)
+        .attr("fill", "blue")
         // .attr("transform", "translate(0," + (doubleArmLength - Math.floor(i / 5) * 2 * (iconRadiusScale(compareWorth))) + ")")
         .attr("transform", "translate(0," + (doubleArmLength / 2 + iconRadiusScale(compareWorth)) + ")")
 }
@@ -361,7 +368,6 @@ function dropBilliIcon() {
     d3.select("#billiIcon")
         .transition()
         .duration(1000)
-        .ease(d3.easeBounce)
         .attr("transform", "translate(0," + (doubleArmLength / 2 + iconRadiusScale(billionaireWorth)) + ")")
     //.attr("transform", "translate(0," + (-3* Math.floor(i / 4) * (iconRadiusScale(weight)) + ")"))
 };
