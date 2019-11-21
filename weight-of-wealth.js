@@ -26,9 +26,7 @@ leftPlateClickCount = 0
 rightPlateClickCount = 0
 
 // determine the ratio between the variables
-//compareRatio = Math.ceil(billionaireWorth / compareWorth)
-// for now we'll just use a constant compare ratio
-var compareRatio = 10
+ compareRatio = Math.ceil(billionaireWorth / compareWorth)
 
 // to make the comparison scalable, create scale with billionaire worth as upper limit
 var angleScale = d3.scaleLinear()
@@ -199,36 +197,36 @@ function rotateArms(rotateAngle) {
     // rotate left arm of scale
     d3.select("#leftArm")
         .transition()
-        .duration(10000)
+        .duration(1000)
         .attr("transform", "rotate(" + (currentRotation) + " 0 0)");
 
     // rotate right arm of scale
     d3.select("#rightArm")
         .transition()
-        .duration(10000)
+        .duration(1000)
         .attr("transform", "rotate(" + (currentRotation) + " 0 0)");
 
     d3.select("#leftStem")
         .transition()
-        .duration(10000)
+        .duration(1000)
         // call the tweening function to update new position
         .tween("pathTween", function () { return pathTweenLeft(path, lStartDeg, lEndDeg) })
 
     d3.select("#leftPlate")
         .transition()
-        .duration(10000)
+        .duration(1000)
         // call the tweening function to update new position
         .tween("pathTween", function () { return pathTweenLeft(path, lStartDeg, lEndDeg) })
 
     d3.select("#rightStem")
         .transition()
-        .duration(10000)
+        .duration(1000)
         // call the tweening function to update new position
         .tween("pathTween", function () { return pathTweenRight(path, rStartDeg, rEndDeg) })
 
     d3.select("#rightPlate")
         .transition()
-        .duration(10000)
+        .duration(1000)
         // call the tweening function to update new position
         .tween("pathTween", function () { return pathTweenRight(path, rStartDeg, rEndDeg) })
 
@@ -353,8 +351,7 @@ function dropCompareIcon(i) {
         .transition()
         .duration(800)
         .ease(d3.easeBounce)
-        // .attr("transform", "translate(0," + (doubleArmLength - Math.floor(i / 5) * 2 * (iconRadiusScale(compareWorth))) + ")")
-        .attr("transform", "translate(0," + (doubleArmLength / 2 + iconRadiusScale(compareWorth)) + ")")
+        .attr("transform", "translate(0," + (doubleArmLength + 0.5*iconRadiusScale(compareWorth) - plateHeight) + ")")
 }
 
 function dropBilliIcon() {
