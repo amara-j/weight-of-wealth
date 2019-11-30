@@ -34,12 +34,16 @@ leftPlateClickCount = 0
 rightPlateClickCount = 0
 
 // determine the ratio between the variables
-compareRatio = Math.ceil(billionaireWorth / compareWorth)
+function getCompareRatio() { return Math.ceil(billionaireWorth / compareWorth) }
 
 // to make the comparison scalable, create scale with billionaire worth as upper limit
-var angleScale = d3.scaleLinear()
-    .domain([0, billionaireWorth])
-    .range([0, 45]);
+var angleScale = function (value) {
+    const scalingFunction = d3.scaleLinear()
+        .domain([0, billionaireWorth])
+        .range([0, 45]);
+    return scalingFunction(value)
+}
+
 
 // can change the numbers in this range to adjust small and large icon sizes
 var iconRadiusScale = d3.scaleLinear()
@@ -129,6 +133,7 @@ var leftPlate = leftContainer.append("rect")
         if (leftPlateClickCount <= 1) {
             // the first time it's clicked, create & drop the billionaire icon
             makeIcons(billionaireWorth, "L", 1)
+            var leftRotateAngle = -angleScale(billionaireWorth)
             rotateArms(leftRotateAngle)
             dropBilliIcon()
         }
@@ -160,24 +165,24 @@ var rightPlate = rightContainer.append("rect")
         rightPlateClickCount += 1;
         if (rightPlateClickCount <= 1)
             // the first time it's clicked, generate the number of icons that would balance scale
-            for (i = 0; i < compareRatio; i += 1) {
+            for (i = 0; i < getCompareRatio(); i += 1) {
                 makeIcons(compareWorth, "R", i)
             }
-        if (rightPlateClickCount <= compareRatio) {
+        if (rightPlateClickCount <= getCompareRatio()) {
             // drop an icon each time it's clicked, until there are no more icons left
             dropCompareIcon(rightPlateClickCount - 1)
             // rotate arms each time an icon is dropped
+            var rightRotateAngle = angleScale(compareWorth)
             rotateArms(rightRotateAngle)
         }
         // don't allow it to interact further once there are no more icons left to drop
-        else if (rightPlateClickCount >= compareRatio) {
+        else if (rightPlateClickCount >= getCompareRatio()) {
             (console.log("no more clicks left!"))
         }
     })
 
-leftRotateAngle = -angleScale(billionaireWorth)
 
-rightRotateAngle = angleScale(compareWorth)
+
 
 //rStartDeg = 90 and lStartDeg = 270 because of the coordinate system in the interpolation function
 
