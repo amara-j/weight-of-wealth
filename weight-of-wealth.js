@@ -46,9 +46,13 @@ var angleScale = function (value) {
 
 
 // can change the numbers in this range to adjust small and large icon sizes
-var iconRadiusScale = d3.scaleLinear()
+var iconRadiusScale = function(value) {
+   const scalingFunction = d3.scaleLinear()
     .domain([0, billionaireWorth])
     .range([10, 70]);
+    return scalingFunction(value)
+}
+
 
 var svg = d3.select("#graph").append("svg")
     .attr("width", svgWidth)
@@ -67,6 +71,7 @@ rightArm = graphContainer.append('rect')
     .attr('width', svgWidth / 4)
     .attr('height', armHeight)
     .attr('id', 'rightArm')
+    
 
 // draw left arm of scale
 leftArm = graphContainer.append('rect')
