@@ -5,31 +5,37 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300&display=swap" rel="stylesheet">
     <meta charset="utf-8">
     <title>wow</title>
-    <script src= "https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+
     <style>
         #graph {
             margin: auto;
             width: 600px;
             border: 3pm solid black;
         }
-
     </style>
 </head>
 
 <body>
-    <div id = "userInput">
-        left value: <input type="text" id = "leftSide" />
-        <br/>
-        right value: <input type="text" id = "rightSide"/>
-        <br/>
-        <input type="button" onclick="javascript:;" value="Go"/>
-    </div>  
+    <div id="userInput">
+        left value: <input type="text" id="leftSide" />
+        <br />
+        right value: <input type="text" id="rightSide" />
+        <br />
+        <input type="button" onClick="javascript:setValues();" value="Go" />
+    </div>
     <div id="graph"></div>
 
     <div id="tooltip" class="hidden">
         <p><span id="value">100</span></p>
     </div>
-    <script src = "./weight-of-wealth.js"></script>
+    <script src="./weight-of-wealth.js"></script>
+    <script type="text/javascript">
+        function setValues() {
+            setLeftValue(document.getElementById("leftSide").value)
+            setRightValue(document.getElementById("rightSide").value)
+        }
+    </script>
 
 </body>
 

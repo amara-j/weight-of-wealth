@@ -18,6 +18,14 @@ var billionaireWorth = 70300000000
 var compareWorth = 2762628933
 // --------------------------------//
 
+function setLeftValue(value) {
+    billionaireWorth = value
+}
+
+function setRightValue(value) {
+    compareWorth = value
+}
+
 // initialize current angle to 0
 currentAngle = 0
 
