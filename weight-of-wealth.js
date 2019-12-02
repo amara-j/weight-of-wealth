@@ -79,6 +79,7 @@ rightArm = graphContainer.append('rect')
     .attr('width', svgWidth / 4)
     .attr('height', armHeight)
     .attr('id', 'rightArm')
+    .classed('scalePart', true)
 
 // draw left arm of scale
 leftArm = graphContainer.append('rect')
@@ -87,13 +88,14 @@ leftArm = graphContainer.append('rect')
     .attr('width', svgWidth / 4)
     .attr('height', armHeight)
     .attr('id', 'leftArm')
+    .classed('scalePart', true)
 
 //draw circle at center of scale
 graphContainer.append("circle")
     .attr("cx", 0)
     .attr("cy", 0)
     .attr("r", centerCircleRadius)
-    .attr("opacity", 1)
+    .classed('scalePart', true)
 
 // draw fulcrum of scale
 fulcrumLeft = graphContainer.append('line')
@@ -103,6 +105,9 @@ fulcrumLeft = graphContainer.append('line')
     .attr('y2', 0)
     .attr('stroke-width', 4)
     .attr('stroke', "black")
+    .attr("id", "fulcrumLeft")
+    .classed('scalePart', true)
+
 fulcrumRight = graphContainer.append('line')
     .attr('x1', fulcrumWidth / 2)
     .attr('y1', doubleArmLength / 2 * Math.cos(Math.PI / 4))
@@ -110,6 +115,7 @@ fulcrumRight = graphContainer.append('line')
     .attr('y2', 0)
     .attr('stroke-width', 4)
     .attr('stroke', "black")
+    .classed('scalePart', true)
 
 // draw the floor
 floor = graphContainer.append('line')
@@ -119,6 +125,7 @@ floor = graphContainer.append('line')
     .attr('y2', floorHeight)
     .attr('stroke-width', 4)
     .attr('stroke', "black")
+    .classed('scalePart', true)
 
 // create small svg container for stem and plate unit on left side
 var leftContainer = svg.append("g")
@@ -130,6 +137,7 @@ var leftStem = leftContainer.append("rect")
     .attr("width", stemWidth)
     .attr("id", "leftStem")
     .attr("fill", "black")
+    .classed('scalePart', true)
 // draw left plate and assign it a starting position
 var leftPlate = leftContainer.append("rect")
     .attr("x", svgWidth / 4 - plateWidth / 2) //Starting x
@@ -138,6 +146,7 @@ var leftPlate = leftContainer.append("rect")
     .attr("width", plateWidth)
     .attr("id", "leftPlate")
     .attr("fill", "black")
+    .classed('scalePart', true)
 
 // create small svg container for stem+plate unit on right side
 var rightContainer = svg.append("g")
@@ -149,6 +158,7 @@ var rightStem = rightContainer.append("rect")
     .attr("width", stemWidth)
     .attr("id", "rightStem")
     .attr("fill", "black")
+    .classed('scalePart', true)
 // draw right plate and assign it a starting position
 var rightPlate = rightContainer.append("rect")
     .attr("x", svgWidth * 3 / 4 - plateWidth / 2)
@@ -157,6 +167,7 @@ var rightPlate = rightContainer.append("rect")
     .attr("width", plateWidth)
     .attr("id", "rightPlate")
     .attr("fill", "black")
+    .classed('scalePart', true)
 
 rightInvisible = graphContainer.append('rect')
     // click on this invisible rectangle to turn scale left
@@ -177,7 +188,10 @@ rightInvisible = graphContainer.append('rect')
             for (i = 0; i < getCompareRatio(); i += 1) {
                 makeIcons(compareWorth, "R", i)
             }
-        if (rightPlateClickCount == getCompareRatio() && leftPlateClickCount >= 1) { addBalanceMessage("congrats! you balanced the scale") }
+        if (rightPlateClickCount == getCompareRatio() && leftPlateClickCount >= 1) {
+            addBalanceMessage("congrats! you balanced the scale")
+            fadeOutScale()
+        }
         if (rightPlateClickCount <= getCompareRatio()) {
             // drop an icon each time it's clicked, until there are no more icons left
             dropCompareIcon(rightPlateClickCount - 1)
@@ -215,8 +229,10 @@ leftInvisible = graphContainer.append('rect')
             updateTextLeft(leftPlateClickCount)
         }
         // don't allow it to interact further if clicked more than once
-        if (rightPlateClickCount == getCompareRatio() && leftPlateClickCount >= 1) 
-        { addBalanceMessage("congrats! you balanced the scale") }
+        if (rightPlateClickCount == getCompareRatio() && leftPlateClickCount >= 1) {
+            addBalanceMessage("congrats! you balanced the scale")
+            fadeOutScale()
+        }
         if (leftPlateClickCount > 1) { (console.log("no more clicks left!")) }
     })
 
@@ -230,6 +246,19 @@ function addBalanceMessage(message) {
         .attr("x", 0)
         .attr("y", -200)
 }
+
+
+function fadeOutScale() {
+    d3.selectAll('.scalePart')
+        .attr('opacity', 1)
+        .attr('fill', "purple")
+        .attr('stroke', "purple")
+        .transition()
+        .duration(2000)
+        .attr('opacity', 0)
+}
+
+fadeOutScale()
 
 // the reset button reloads the page 
 d3.select("#resetButton")
