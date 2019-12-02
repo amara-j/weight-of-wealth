@@ -22,6 +22,11 @@ var svg = d3.select("#graph").append("svg")
     .attr("width", svgWidth)
     .attr("height", svgHeight)
 
+var resetButton = d3.select("#resetButton")
+    .on("click", function(){
+       layout.reload() 
+    })
+
 // create container for graph
 var graphContainer = svg.append("g").attr("id", "balanceBar")
     .attr("transform", "translate(" + svgWidth / 2 + "," + svgHeight / 2 + ")")
@@ -197,6 +202,13 @@ leftInvisible = graphContainer.append('rect')
         // don't allow it to interact further if clicked more than once
         else if (leftPlateClickCount > 1) { (console.log("no more clicks left!")) }
     })
+
+// the reset button reloads the page 
+d3.select("#resetButton")
+    .on("click", function () {
+        location.reload()
+    })
+
 
 //rStartDeg = 90 and lStartDeg = 270 because of the coordinate system in the interpolation function
 
