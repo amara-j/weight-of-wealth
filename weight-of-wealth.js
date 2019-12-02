@@ -11,11 +11,15 @@ var stemOffset = 5 // makes it look more like the stems are really attached to t
 var fulcrumWidth = 20
 var padding = 20
 var doubleArmLength = svgWidth / 2
+var floorHeight = doubleArmLength / 2 * Math.cos(Math.PI / 4) + 3
+// boolean indicator of whether scale has been balanced 
+// (resets without any weight don't count as balanced)
+var scaleBalanced = "no"
 
 // ------------------------ these numbers are selection variables
 // they will eventually be fed in from sharvari's code, read from csv
-var billionaireWorth = 70300000000
-var compareWorth = 2762628933
+var billionaireWorth = 5
+var compareWorth = 1
 // --------------------------------//
 
 var svg = d3.select("#graph").append("svg")
@@ -23,8 +27,8 @@ var svg = d3.select("#graph").append("svg")
     .attr("height", svgHeight)
 
 var resetButton = d3.select("#resetButton")
-    .on("click", function(){
-       layout.reload() 
+    .on("click", function () {
+        layout.reload()
     })
 
 // create container for graph
@@ -110,9 +114,9 @@ fulcrumRight = graphContainer.append('line')
 // draw the floor
 floor = graphContainer.append('line')
     .attr('x1', -doubleArmLength / 2)
-    .attr('y1', doubleArmLength / 2 * Math.cos(Math.PI / 4))
+    .attr('y1', floorHeight)
     .attr('x2', doubleArmLength / 2)
-    .attr('y2', doubleArmLength / 2 * Math.cos(Math.PI / 4))
+    .attr('y2', floorHeight)
     .attr('stroke-width', 4)
     .attr('stroke', "black")
 
@@ -164,17 +168,23 @@ rightInvisible = graphContainer.append('rect')
     .on("click", function () {
         // keep track of how many times it has been clicked
         rightPlateClickCount += 1;
+        console.log("left clicks:", leftPlateClickCount)
+        console.log("right clicks:", rightPlateClickCount)
+        console.log("scale balanced?", scaleBalanced)
+        console.log("compare ratio: ", getCompareRatio())
         if (rightPlateClickCount <= 1)
             // the first time it's clicked, generate the number of icons that would balance scale
             for (i = 0; i < getCompareRatio(); i += 1) {
                 makeIcons(compareWorth, "R", i)
             }
+        if (rightPlateClickCount == getCompareRatio() && leftPlateClickCount >= 1) { addBalanceMessage("congrats! you balanced the scale") }
         if (rightPlateClickCount <= getCompareRatio()) {
             // drop an icon each time it's clicked, until there are no more icons left
             dropCompareIcon(rightPlateClickCount - 1)
             // rotate arms each time an icon is dropped
             var rightRotateAngle = angleScale(compareWorth)
             rotateArms(rightRotateAngle)
+            updateTextRight(rightPlateClickCount)
         }
         // don't allow it to interact further once there are no more icons left to drop
         else if (rightPlateClickCount >= getCompareRatio()) {
@@ -192,22 +202,61 @@ leftInvisible = graphContainer.append('rect')
     .on("click", function () {
         // keep track of how many times it has been clicked 
         leftPlateClickCount += 1;
+        console.log("left clicks:", leftPlateClickCount)
+        console.log("right clicks:", rightPlateClickCount)
+        console.log("scale balanced?", scaleBalanced)
+        console.log("compare ratio: ", getCompareRatio())
         if (leftPlateClickCount <= 1) {
             // the first time it's clicked, create & drop the billionaire icon
             makeIcons(billionaireWorth, "L", 1)
             var leftRotateAngle = -angleScale(billionaireWorth)
             rotateArms(leftRotateAngle)
             dropBilliIcon()
+            updateTextLeft(leftPlateClickCount)
         }
         // don't allow it to interact further if clicked more than once
-        else if (leftPlateClickCount > 1) { (console.log("no more clicks left!")) }
+        if (rightPlateClickCount == getCompareRatio() && leftPlateClickCount >= 1) 
+        { addBalanceMessage("congrats! you balanced the scale") }
+        if (leftPlateClickCount > 1) { (console.log("no more clicks left!")) }
     })
+
+// function to create message once scale is balanced
+function addBalanceMessage(message) {
+    graphContainer.append("text")
+        .attr("id", "balanceMessage")
+        .text(message)
+        .attr("font-family", "Open Sans Condensed")
+        .attr("font-size", "20px")
+        .attr("x", 0)
+        .attr("y", -200)
+}
 
 // the reset button reloads the page 
 d3.select("#resetButton")
     .on("click", function () {
         location.reload()
     })
+
+function updateTextLeft(leftPlateClickCount) {
+    graphContainer.append("text")
+        .attr("id", "leftText")
+        .text(leftPlateClickCount)
+        .attr("font-family", "Open Sans Condensed")
+        .attr("font-size", "34px")
+        .attr("x", -doubleArmLength / 2)
+        .attr("y", floorHeight + 50)
+}
+
+function updateTextRight(rightPlateClickCount) {
+    d3.select("#rightText").remove()
+    graphContainer.append("text")
+        .attr("id", "rightText")
+        .text(rightPlateClickCount)
+        .attr("font-family", "Open Sans Condensed")
+        .attr("font-size", "34px")
+        .attr("x", doubleArmLength / 2)
+        .attr("y", floorHeight + 50)
+}
 
 
 //rStartDeg = 90 and lStartDeg = 270 because of the coordinate system in the interpolation function
@@ -387,3 +436,4 @@ function dropBilliIcon() {
         .ease(d3.easeBounce)
         .attr("transform", "translate(0," + (doubleArmLength / 2 + iconRadiusScale(billionaireWorth)) + ")")
 };
+
