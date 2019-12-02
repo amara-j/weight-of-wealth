@@ -18,6 +18,14 @@ var billionaireWorth = 70300000000
 var compareWorth = 2762628933
 // --------------------------------//
 
+var svg = d3.select("#graph").append("svg")
+    .attr("width", svgWidth)
+    .attr("height", svgHeight)
+
+// create container for graph
+var graphContainer = svg.append("g").attr("id", "balanceBar")
+    .attr("transform", "translate(" + svgWidth / 2 + "," + svgHeight / 2 + ")")
+
 function setLeftValue(value) {
     billionaireWorth = value
 }
@@ -46,21 +54,12 @@ var angleScale = function (value) {
 
 
 // can change the numbers in this range to adjust small and large icon sizes
-var iconRadiusScale = function(value) {
-   const scalingFunction = d3.scaleLinear()
-    .domain([0, billionaireWorth])
-    .range([10, 70]);
+var iconRadiusScale = function (value) {
+    const scalingFunction = d3.scaleLinear()
+        .domain([0, billionaireWorth])
+        .range([10, 70]);
     return scalingFunction(value)
 }
-
-
-var svg = d3.select("#graph").append("svg")
-    .attr("width", svgWidth)
-    .attr("height", svgHeight)
-
-// create container for graph
-var graphContainer = svg.append("g").attr("id", "balanceBar")
-    .attr("transform", "translate(" + svgWidth / 2 + "," + svgHeight / 2 + ")")
 
 // draw scale elements:
 
@@ -71,7 +70,6 @@ rightArm = graphContainer.append('rect')
     .attr('width', svgWidth / 4)
     .attr('height', armHeight)
     .attr('id', 'rightArm')
-    
 
 // draw left arm of scale
 leftArm = graphContainer.append('rect')
@@ -131,20 +129,6 @@ var leftPlate = leftContainer.append("rect")
     .attr("width", plateWidth)
     .attr("id", "leftPlate")
     .attr("fill", "black")
-    // left plate is interactive
-    .on("click", function () {
-        // keep track of how many times it has been clicked 
-        leftPlateClickCount += 1;
-        if (leftPlateClickCount <= 1) {
-            // the first time it's clicked, create & drop the billionaire icon
-            makeIcons(billionaireWorth, "L", 1)
-            var leftRotateAngle = -angleScale(billionaireWorth)
-            rotateArms(leftRotateAngle)
-            dropBilliIcon()
-        }
-        // don't allow it to interact further if clicked more than once
-        else if (leftPlateClickCount > 1) { (console.log("no more clicks left!")) }
-    })
 
 // create small svg container for stem+plate unit on right side
 var rightContainer = svg.append("g")
@@ -164,7 +148,14 @@ var rightPlate = rightContainer.append("rect")
     .attr("width", plateWidth)
     .attr("id", "rightPlate")
     .attr("fill", "black")
-    // right plate is interactive
+
+rightInvisible = graphContainer.append('rect')
+    // click on this invisible rectangle to turn scale left
+    .attr('x', centerCircleRadius)
+    .attr('y', -doubleArmLength / 2)
+    .attr('width', svgWidth / 2)
+    .attr('height', svgWidth / 2)
+    .attr('opacity', 0)
     .on("click", function () {
         // keep track of how many times it has been clicked
         rightPlateClickCount += 1;
@@ -186,8 +177,26 @@ var rightPlate = rightContainer.append("rect")
         }
     })
 
-
-
+leftInvisible = graphContainer.append('rect')
+    // click on this invisible rectangle to turn scale left
+    .attr('x', -centerCircleRadius - svgWidth / 2)
+    .attr('y', -doubleArmLength / 2)
+    .attr('width', svgWidth / 2)
+    .attr('height', svgWidth / 2)
+    .attr('opacity', 0)
+    .on("click", function () {
+        // keep track of how many times it has been clicked 
+        leftPlateClickCount += 1;
+        if (leftPlateClickCount <= 1) {
+            // the first time it's clicked, create & drop the billionaire icon
+            makeIcons(billionaireWorth, "L", 1)
+            var leftRotateAngle = -angleScale(billionaireWorth)
+            rotateArms(leftRotateAngle)
+            dropBilliIcon()
+        }
+        // don't allow it to interact further if clicked more than once
+        else if (leftPlateClickCount > 1) { (console.log("no more clicks left!")) }
+    })
 
 //rStartDeg = 90 and lStartDeg = 270 because of the coordinate system in the interpolation function
 
