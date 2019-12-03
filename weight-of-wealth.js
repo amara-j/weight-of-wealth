@@ -13,11 +13,7 @@ var padding = 20
 var doubleArmLength = svgWidth / 2
 var floorHeight = doubleArmLength / 2 * Math.cos(Math.PI / 4) + 3
 
-// boolean indicator of whether scale has been balanced 
-// (resets without any weight don't count as balanced)
 
-// ------------------------ these numbers are selection variables
-// they will eventually be fed in from sharvari's code, read from csv
 var billionaireWorth = 20
 var compareWorth = 1
 // --------------------------------//
@@ -38,8 +34,6 @@ var graphContainer = svg.append("g").attr("id", "balanceBar")
 function setLeftValue(value) {
     billionaireWorth = value
 }
-
-
 
 function setRightValue(value) {
     compareWorth = value
@@ -176,7 +170,7 @@ rightInvisible = graphContainer.append('rect')
     .attr('x', centerCircleRadius)
     .attr('y', -doubleArmLength / 2)
     .attr('width', svgWidth / 2)
-    .attr('height', svgWidth / 2)
+    .attr('height', svgWidth)
     .attr('opacity', 0)
     .on("click", function () {
         // keep track of how many times it has been clicked
@@ -209,7 +203,7 @@ leftInvisible = graphContainer.append('rect')
     .attr('x', -centerCircleRadius - svgWidth / 2)
     .attr('y', -doubleArmLength / 2)
     .attr('width', svgWidth / 2)
-    .attr('height', svgWidth / 2)
+    .attr('height', svgWidth)
     .attr('opacity', 0)
     .on("click", function () {
         // keep track of how many times it has been clicked 
@@ -282,9 +276,6 @@ function updateTextRight(rightPlateClickCount) {
         .attr("x", doubleArmLength / 2)
         .attr("y", floorHeight + 50)
 }
-
-
-//rStartDeg = 90 and lStartDeg = 270 because of the coordinate system in the interpolation function
 
 var currentRotation = 0
 function rotateArms(rotateAngle) {
@@ -390,18 +381,15 @@ function pathTweenRight(path, startDeg, endDeg) {
             .attr("y", point.y - stemHeight + stemOffset)
         d3.selectAll(".compareIcon")
             .each(function (d, i) {
+                circlesPerRow = Math.floor(plateWidth / (2 * iconRadiusScale(compareWorth)))
                 d3.select(this)
-                    .attr("cx", point.x + 2*(i % circlesPerRow* iconRadiusScale(compareWorth) - plateWidth/4 + 0.5*iconRadiusScale(compareWorth)))
-                    .attr("cy", point.y - 25 * Math.floor(i / circlesPerRow) + stemOffset - doubleArmLength - plateHeight - stemHeight)
+                    .attr("cx", point.x + 2 * (i % circlesPerRow * iconRadiusScale(compareWorth) - plateWidth / 4
+                        + 0.5 * iconRadiusScale(compareWorth)))
+                    .attr("cy", point.y - (iconRadiusScale(compareWorth) * 2 * Math.floor(i / circlesPerRow)) - doubleArmLength - plateHeight - stemHeight + 2 * stemOffset)
             })
     }
 }
 
-// Math.floor(plateWidth / 2*iconRadiusScale(compareWorth))
-
-// do basically the same thing with some small coordinate changes for the left side
-
-// should current angle & everything be going in here instead??
 function pathTweenLeft(path, startDeg, endDeg) {
     var length = path.node().getTotalLength();
     var interpolationFn = d3.interpolate(length * startDeg / 360, length * endDeg / 360);
@@ -415,26 +403,12 @@ function pathTweenLeft(path, startDeg, endDeg) {
             .attr("y", point.y - stemHeight + stemOffset)
         d3.select("#billiIcon")
             .attr("cx", point.x)
-            // replace 70 with radius of big circle!!
-            .attr("cy", point.y - 2 * stemHeight + stemOffset - svgWidth / 4 - 70 - plateHeight)
+            .attr("cy", point.y - 2 * stemHeight + stemOffset - svgWidth / 4 - iconRadiusScale(billionaireWorth) - plateHeight)
     }
 }
 
 function makeIcons(weight, side, i) {
     svg.append('circle')
-        .attr("cx", function () {
-            // put billionaire icon on left side of screen
-            if (side == "L") {
-                return 200
-            }
-            // put comparison icon on right side of screen
-            // stack the icons
-            else {
-                circlesPerRow = Math.floor(plateWidth / (2 * iconRadiusScale(compareWorth)))
-                console.log("make icons circles per row:", circlesPerRow)
-                return 1.5 * doubleArmLength - plateWidth / 2 + i % 6 * 2 * (iconRadiusScale(compareWorth))
-            }
-        })
         // assign each icon an ID
         .attr("class", function () {
             if (side == "R") { return "compareIcon" }
@@ -446,15 +420,6 @@ function makeIcons(weight, side, i) {
             }
             // the comparison icons get numbered ids like "compareIcon3"
             else { return "compareIcon" + i }
-        })
-        .attr("cy", function () {
-            if (side == "R") {
-                return 15 * Math.floor(i / 4) + (iconRadiusScale(weight) + doubleArmLength - stemHeight - plateHeight - stemOffset)
-                //return doubleArmLength
-            }
-            else {
-                return (-iconRadiusScale(weight))
-            }
         })
         .attr("fill", "gold")
         .attr("r", iconRadiusScale(weight))
