@@ -1,6 +1,6 @@
 // these are all modifiable style parameters to change dimensions in visualization:
-var svgWidth = 800
-var svgHeight = 800
+var svgWidth = 1000
+var svgHeight = 1000
 var centerCircleRadius = 10
 var stemHeight = 60
 var stemWidth = 4
@@ -18,6 +18,9 @@ var billionaireWorth = 20
 var compareWorth = 1
 // --------------------------------//
 
+billiDataset = [1.31E+11, 96500000000, 82500000000, 6000000000, 64000000000, 62700000000, 62500000000, 62300000000]
+compareDataset = [2412810000, 1860476400, 235680000, 2500048502]
+
 var svg = d3.select("#graph").append("svg")
     .attr("width", svgWidth)
     .attr("height", svgHeight)
@@ -27,39 +30,73 @@ var resetButton = d3.select("#resetButton")
         layout.reload()
     })
 
-function makeSelectionButtonsLeft(i) {
+function makeBilliButtons(i, billiDataset) {
     svg.append('circle')
-        // assign each icon an ID
-        .attr("cx", 50*(1+ i%3))
-        .attr("cy", 50*(1+ Math.floor(i/3)))
+        .attr("id", "billiButton" + i)
+        .classed('billiButton', true)
+        .attr("cx", 50 * (1 + i % 4))
+        .attr("cy", 50 * (1 + Math.floor(i / 4)))
         .attr("fill", "gold")
         .attr("r", 20)
+        .on("click", function () {
+            d3.select(this).attr("fill", "red")
+            billiWorth = billiDataset[i]
+            console.log("billionaire value set to", billiWorth)
+            currentBilliValue = setBilliValue(billiWorth)
+            return currentBilliValue
+        })
 }
 
-function makeSelectionButtonsRight(i) {
+function makeCompareButtons(i, compareDataset) {
     svg.append('circle')
-        // assign each icon an ID
-        .attr("cx", 50*(12+ i%3))
-        .attr("cy", 50*(1+ Math.floor(i/3)))
+        .attr("id", "compareButton" + i)
+        .classed('compareButton', true)
+        .attr("cx", 50 * (1 + i % 4))
+        .attr("cy", 50 * (4 + Math.floor(i / 4)))
         .attr("fill", "gold")
         .attr("r", 20)
+        .on("click", function () {
+            d3.select(this).attr("fill", "red")
+            compareWorth = compareDataset[i]
+            console.log("compare value set to", compareWorth)
+            currentCompareValue = setCompareValue(compareWorth)
+            return currentCompareValue
+        })
 }
 
-for (i = 0; i < 9; i += 1) {
-    makeSelectionButtonsLeft(i)
-    makeSelectionButtonsRight(i)
+
+for (i = 0; i < 8; i += 1) {
+    makeBilliButtons(i, billiDataset)
 }
+
+for (i = 0; i < 4; i += 1) {
+    makeCompareButtons(i, compareDataset)
+}
+
+
+// eventually we do it this way
+// d3.csv("billionaire_data.csv").then(function (data) {
+//     dataset = data;
+
+//     svg.selectAll(".billiButton")
+//         .data(dataset)
+//         .enter()
+//         .on("click", function (d) {
+//             console.log(d.Worth)
+//         })
+// })
+
 
 
 // create container for graph
 var graphContainer = svg.append("g").attr("id", "balanceBar")
     .attr("transform", "translate(" + svgWidth / 2 + "," + svgHeight / 2 + ")")
 
-function setLeftValue(value) {
+function setBilliValue(value) {
     billionaireWorth = value
 }
 
-function setRightValue(value) {
+function setCompareValue(value) {
     compareWorth = value
 }
 
@@ -206,7 +243,7 @@ rightInvisible = graphContainer.append('rect')
             }
         if (rightPlateClickCount == getCompareRatio() && leftPlateClickCount >= 1) {
             addBalanceMessage("congrats! you balanced the scale")
-           // fadeOutScale()
+            // fadeOutScale()
         }
         if (rightPlateClickCount <= getCompareRatio()) {
             // drop an icon each time it's clicked, until there are no more icons left
@@ -243,7 +280,7 @@ leftInvisible = graphContainer.append('rect')
         // don't allow it to interact further if clicked more than once
         if (rightPlateClickCount == getCompareRatio() && leftPlateClickCount >= 1) {
             addBalanceMessage("congrats! you balanced the scale")
-           // fadeOutScale()
+            // fadeOutScale()
         }
         if (leftPlateClickCount > 1) { (console.log("no more clicks left!")) }
     })
