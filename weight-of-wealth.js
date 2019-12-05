@@ -27,6 +27,30 @@ var resetButton = d3.select("#resetButton")
         layout.reload()
     })
 
+function makeSelectionButtonsLeft(i) {
+    svg.append('circle')
+        // assign each icon an ID
+        .attr("cx", 50*(1+ i%3))
+        .attr("cy", 50*(1+ Math.floor(i/3)))
+        .attr("fill", "gold")
+        .attr("r", 20)
+}
+
+function makeSelectionButtonsRight(i) {
+    svg.append('circle')
+        // assign each icon an ID
+        .attr("cx", 50*(12+ i%3))
+        .attr("cy", 50*(1+ Math.floor(i/3)))
+        .attr("fill", "gold")
+        .attr("r", 20)
+}
+
+for (i = 0; i < 9; i += 1) {
+    makeSelectionButtonsLeft(i)
+    makeSelectionButtonsRight(i)
+}
+
+
 // create container for graph
 var graphContainer = svg.append("g").attr("id", "balanceBar")
     .attr("transform", "translate(" + svgWidth / 2 + "," + svgHeight / 2 + ")")
@@ -182,7 +206,7 @@ rightInvisible = graphContainer.append('rect')
             }
         if (rightPlateClickCount == getCompareRatio() && leftPlateClickCount >= 1) {
             addBalanceMessage("congrats! you balanced the scale")
-            fadeOutScale()
+           // fadeOutScale()
         }
         if (rightPlateClickCount <= getCompareRatio()) {
             // drop an icon each time it's clicked, until there are no more icons left
@@ -219,7 +243,7 @@ leftInvisible = graphContainer.append('rect')
         // don't allow it to interact further if clicked more than once
         if (rightPlateClickCount == getCompareRatio() && leftPlateClickCount >= 1) {
             addBalanceMessage("congrats! you balanced the scale")
-            fadeOutScale()
+           // fadeOutScale()
         }
         if (leftPlateClickCount > 1) { (console.log("no more clicks left!")) }
     })
