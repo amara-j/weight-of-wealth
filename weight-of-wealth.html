@@ -7,16 +7,36 @@
     <title>wow</title>
     <script src="https://d3js.org/d3.v5.min.js"></script>
 
-    <style>
+    <!-- <style>
         #graph {
             margin: auto;
             width: 600px;
             border: 3pm solid black;
         }
-    </style>
+    </style> -->
+
+
 </head>
 
 <body>
+    <div id="graph" class="svg-container" ></div>
+
+    <style>
+        .svg-container {
+                display: inline-block;
+                position: relative;
+                width: 100%;
+                padding-bottom: 100%;
+                vertical-align: top;
+                overflow: hidden;
+            }
+            .svg-content {
+                display: inline-block;
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
+        </style>
 
     <div id="userInput">
         left value: <input type="text" id="leftSide" />
@@ -28,7 +48,7 @@
 
     <div id="resetButton"> <input type="button" value="Reset" /> </div>
 
-    <div id="graph"></div>
+  
 
     <div id="tooltip" class="hidden">
     </div>

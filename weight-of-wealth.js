@@ -1,5 +1,6 @@
 // these are all modifiable style parameters to change dimensions in visualization:
 var svgWidth = 1000
+var iconRadius = 30
 var svgHeight = 1000
 var centerCircleRadius = 10
 var stemHeight = 60
@@ -14,16 +15,18 @@ var doubleArmLength = svgWidth / 2
 var floorHeight = doubleArmLength / 2 * Math.cos(Math.PI / 4) + 3
 
 
-var billionaireWorth = 20
-var compareWorth = 1
+var billionaireWorth = null
+var compareWorth = null
 // --------------------------------//
 
 billiDataset = [1.31E+11, 96500000000, 82500000000, 6000000000]
-compareDataset = [2412810000, 1860476400, 235680000, 2500048502]
+compareDataset = [2412810000, 1860476400, 478740000, 2500048502]
 
-var svg = d3.select("#graph").append("svg")
-    .attr("width", svgWidth)
-    .attr("height", svgHeight)
+var svg = d3.select("div#graph")
+    .append("svg")
+    .attr("preserveAspectRatio", "xMinYMin meet")
+    .attr("viewBox", "-300 -300 1400 1400")
+    .classed("svg-content", true);
 
 var resetButton = d3.select("#resetButton")
     .on("click", function () {
@@ -34,10 +37,10 @@ function makeBilliButtons(i, billiDataset) {
     svg.append('circle')
         .attr("id", "billiButton" + i)
         .classed('billiButton', true)
-        .attr("cx", 50 * (1 + i % 4))
-        .attr("cy", 50 * (1 + Math.floor(i / 4)))
+        .attr("cy", 70 * (i % 4))
+        .attr("cx", (60 + Math.floor(i / 4)))
         .attr("fill", "gold")
-        .attr("r", 20)
+        .attr("r", iconRadius)
         .on("click", function () {
             d3.select(this).attr("fill", "red")
             billiWorth = billiDataset[i]
@@ -51,10 +54,10 @@ function makeCompareButtons(i, compareDataset) {
     svg.append('circle')
         .attr("id", "compareButton" + i)
         .classed('compareButton', true)
-        .attr("cx", 50 * (1 + i % 4))
-        .attr("cy", 50 * (4 + Math.floor(i / 4)))
+        .attr("cy", 70 * (i % 4))
+        .attr("cx", 100 * (9 + Math.floor(i / 4)))
         .attr("fill", "gold")
-        .attr("r", 20)
+        .attr("r", iconRadius)
         .on("click", function () {
             d3.select(this).attr("fill", "red")
             compareWorth = compareDataset[i]
@@ -68,19 +71,6 @@ for (i = 0; i < 4; i += 1) {
     makeBilliButtons(i, billiDataset)
     makeCompareButtons(i, compareDataset)
 }
-
-
-// eventually we do it this way
-// d3.csv("billionaire_data.csv").then(function (data) {
-//     dataset = data;
-
-//     svg.selectAll(".billiButton")
-//         .data(dataset)
-//         .enter()
-//         .on("click", function (d) {
-//             console.log(d.Worth)
-//         })
-// })
 
 
 
@@ -230,28 +220,34 @@ rightInvisible = graphContainer.append('rect')
     .attr('height', svgWidth)
     .attr('opacity', 0)
     .on("click", function () {
-        // keep track of how many times it has been clicked
-        rightPlateClickCount += 1;
-        if (rightPlateClickCount <= 1)
-            // the first time it's clicked, generate the number of icons that would balance scale
-            for (i = 0; i < getCompareRatio(); i += 1) {
-                makeIcons(compareWorth, "R", i)
+        if (compareWorth == null || billionaireWorth == null) {
+            console.log("nothing to balance– select 2 variables to compare")
+        }
+        else {
+            // keep track of how many times it has been clicked
+            rightPlateClickCount += 1;
+            if (rightPlateClickCount <= 1)
+                // the first time it's clicked, generate the number of icons that would balance scale
+                for (i = 0; i < getCompareRatio(); i += 1) {
+                    makeIcons(compareWorth, "R", i)
+                    console.log(getCompareRatio(), "to balance")
+                }
+            if (rightPlateClickCount == getCompareRatio() && leftPlateClickCount >= 1) {
+                addBalanceMessage("congrats! you balanced the scale")
+                // fadeOutScale()
             }
-        if (rightPlateClickCount == getCompareRatio() && leftPlateClickCount >= 1) {
-            addBalanceMessage("congrats! you balanced the scale")
-            // fadeOutScale()
-        }
-        if (rightPlateClickCount <= getCompareRatio()) {
-            // drop an icon each time it's clicked, until there are no more icons left
-            dropCompareIcon(rightPlateClickCount - 1)
-            // rotate arms each time an icon is dropped
-            var rightRotateAngle = angleScale(compareWorth)
-            rotateArms(rightRotateAngle)
-            updateTextRight(rightPlateClickCount)
-        }
-        // don't allow it to interact further once there are no more icons left to drop
-        else if (rightPlateClickCount >= getCompareRatio()) {
-            (console.log("no more clicks left!"))
+            if (rightPlateClickCount <= getCompareRatio()) {
+                // drop an icon each time it's clicked, until there are no more icons left
+                dropCompareIcon(rightPlateClickCount - 1)
+                // rotate arms each time an icon is dropped
+                var rightRotateAngle = angleScale(compareWorth)
+                rotateArms(rightRotateAngle)
+                updateTextRight(rightPlateClickCount)
+            }
+            // don't allow it to interact further once there are no more icons left to drop
+            else if (rightPlateClickCount >= getCompareRatio()) {
+                (console.log("no more clicks left!"))
+            }
         }
     })
 
@@ -263,22 +259,29 @@ leftInvisible = graphContainer.append('rect')
     .attr('height', svgWidth)
     .attr('opacity', 0)
     .on("click", function () {
-        // keep track of how many times it has been clicked 
-        leftPlateClickCount += 1;
-        if (leftPlateClickCount <= 1) {
-            // the first time it's clicked, create & drop the billionaire icon
-            makeIcons(billionaireWorth, "L", 1)
-            var leftRotateAngle = -angleScale(billionaireWorth)
-            rotateArms(leftRotateAngle)
-            dropBilliIcon()
-            updateTextLeft(leftPlateClickCount)
+        if (compareWorth == null || billionaireWorth == null) {
+            console.log("nothing to balance– select 2 variables to compare")
         }
-        // don't allow it to interact further if clicked more than once
-        if (rightPlateClickCount == getCompareRatio() && leftPlateClickCount >= 1) {
-            addBalanceMessage("congrats! you balanced the scale")
-            // fadeOutScale()
+        else {
+            // keep track of how many times it has been clicked 
+            leftPlateClickCount += 1;
+            if (leftPlateClickCount <= 1) {
+                // the first time it's clicked, create & drop the billionaire icon
+                console.log(getCompareRatio(), "to balance")
+                // makeIcons(billionaireWorth, "L", 1)
+                makeIcons(billionaireWorth, "L", 1)
+                var leftRotateAngle = -angleScale(billionaireWorth)
+                rotateArms(leftRotateAngle)
+                dropBilliIcon()
+                updateTextLeft(leftPlateClickCount)
+            }
+            // don't allow it to interact further if clicked more than once
+            if (rightPlateClickCount == getCompareRatio() && leftPlateClickCount >= 1) {
+                addBalanceMessage("congrats! you balanced the scale")
+                // fadeOutScale()
+            }
+            if (leftPlateClickCount > 1) { (console.log("no more clicks left!")) }
         }
-        if (leftPlateClickCount > 1) { (console.log("no more clicks left!")) }
     })
 
 // function to create message once scale is balanced
@@ -466,6 +469,7 @@ function pathTweenLeft(path, startDeg, endDeg) {
 
 function makeIcons(weight, side, i) {
     svg.append('circle')
+        .attr("cy", -100000)
         // assign each icon an ID
         .attr("class", function () {
             if (side == "R") { return "compareIcon" }
