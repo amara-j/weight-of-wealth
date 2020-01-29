@@ -445,7 +445,8 @@ function pathTweenRight(path, startDeg, endDeg) {
                 d3.select(this)
                     .attr("cx", point.x + 2 * (i % circlesPerRow * iconRadiusScale(compareWorth) - plateWidth / 4
                         + 0.5 * iconRadiusScale(compareWorth)))
-                    .attr("cy", point.y - (iconRadiusScale(compareWorth) * 2 * Math.floor(i / circlesPerRow)) - doubleArmLength - plateHeight - stemHeight + 2 * stemOffset)
+                    .attr("cy", point.y - (iconRadiusScale(compareWorth) * 2 * Math.floor(i / circlesPerRow)) - 
+                    doubleArmLength - plateHeight - stemHeight + 2 * stemOffset)
             })
     }
 }
@@ -469,7 +470,7 @@ function pathTweenLeft(path, startDeg, endDeg) {
 
 function makeIcons(weight, side, i) {
     svg.append('circle')
-        .attr("cy", -100000)
+    .style("opacity", 0)
         // assign each icon an ID
         .attr("class", function () {
             if (side == "R") { return "compareIcon" }
@@ -488,6 +489,7 @@ function makeIcons(weight, side, i) {
 
 function dropCompareIcon(i) {
     d3.select("#compareIcon" + i)
+        .style("opacity", 1)
         .transition()
         .duration(800)
         .ease(d3.easeBounce)
@@ -496,6 +498,7 @@ function dropCompareIcon(i) {
 
 function dropBilliIcon() {
     d3.select("#billiIcon")
+        .style("opacity", 1)
         .transition()
         .duration(1000)
         .ease(d3.easeBounce)
