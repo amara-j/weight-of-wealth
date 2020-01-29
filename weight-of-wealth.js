@@ -18,7 +18,7 @@ var billionaireWorth = 20
 var compareWorth = 1
 // --------------------------------//
 
-billiDataset = [1.31E+11, 96500000000, 82500000000, 6000000000, 64000000000, 62700000000, 62500000000, 62300000000]
+billiDataset = [1.31E+11, 96500000000, 82500000000, 6000000000]
 compareDataset = [2412810000, 1860476400, 235680000, 2500048502]
 
 var svg = d3.select("#graph").append("svg")
@@ -64,12 +64,8 @@ function makeCompareButtons(i, compareDataset) {
         })
 }
 
-
-for (i = 0; i < 8; i += 1) {
-    makeBilliButtons(i, billiDataset)
-}
-
 for (i = 0; i < 4; i += 1) {
+    makeBilliButtons(i, billiDataset)
     makeCompareButtons(i, compareDataset)
 }
 
