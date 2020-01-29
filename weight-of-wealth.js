@@ -39,8 +39,14 @@ function makeBilliButtons(i, billiDataset) {
         .classed('billiButton', true)
         .attr("cy", 70 * (i % 4))
         .attr("cx", (60 + Math.floor(i / 4)))
-        .attr("fill", "gold")
+        .attr("fill", "black")
         .attr("r", iconRadius)
+        .on("mouseover", function () { 
+            d3.select(this).attr("fill", "gold")
+        })
+        .on("mouseout", function () { 
+            d3.select(this).attr("fill", "black")
+        })
         .on("click", function () {
             d3.select(this).attr("fill", "red")
             billiWorth = billiDataset[i]
@@ -56,8 +62,14 @@ function makeCompareButtons(i, compareDataset) {
         .classed('compareButton', true)
         .attr("cy", 70 * (i % 4))
         .attr("cx", 100 * (9 + Math.floor(i / 4)))
-        .attr("fill", "gold")
+        .attr("fill", "black")
         .attr("r", iconRadius)
+        // .on("mouseover", function () { 
+        //     d3.select(this).attr("fill", "gold")
+        // })
+        // .on("mouseout", function () { 
+        //     d3.select(this).attr("fill", "black")
+        // })
         .on("click", function () {
             d3.select(this).attr("fill", "red")
             compareWorth = compareDataset[i]
@@ -445,8 +457,8 @@ function pathTweenRight(path, startDeg, endDeg) {
                 d3.select(this)
                     .attr("cx", point.x + 2 * (i % circlesPerRow * iconRadiusScale(compareWorth) - plateWidth / 4
                         + 0.5 * iconRadiusScale(compareWorth)))
-                    .attr("cy", point.y - (iconRadiusScale(compareWorth) * 2 * Math.floor(i / circlesPerRow)) - 
-                    doubleArmLength - plateHeight - stemHeight + 2 * stemOffset)
+                    .attr("cy", point.y - (iconRadiusScale(compareWorth) * 2 * Math.floor(i / circlesPerRow)) -
+                        doubleArmLength - plateHeight - stemHeight + 2 * stemOffset)
             })
     }
 }
@@ -470,7 +482,7 @@ function pathTweenLeft(path, startDeg, endDeg) {
 
 function makeIcons(weight, side, i) {
     svg.append('circle')
-    .style("opacity", 0)
+        .style("opacity", 0)
         // assign each icon an ID
         .attr("class", function () {
             if (side == "R") { return "compareIcon" }
@@ -483,7 +495,7 @@ function makeIcons(weight, side, i) {
             // the comparison icons get numbered ids like "compareIcon3"
             else { return "compareIcon" + i }
         })
-        .attr("fill", "gold")
+        .attr("fill", "black")
         .attr("r", iconRadiusScale(weight))
 }
 
