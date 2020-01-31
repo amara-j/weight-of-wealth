@@ -17,6 +17,7 @@ var floorHeight = doubleArmLength / 2 * Math.cos(Math.PI / 4) + 3
 
 var billionaireWorth = null
 var compareWorth = null
+var tooltipVal = null
 // --------------------------------//
 
 billiDataset = [1.31E+11, 96500000000, 82500000000, 6000000000]
@@ -42,13 +43,17 @@ function makeBilliButtons(i, billiDataset) {
         .attr("fill", "black")
         .attr("r", iconRadius)
         .on("mouseover", function () {
+            tooltipVal = billiDataset[i]
+            document.getElementById('tooltip').innerHTML = tooltipVal
+            console.log(tooltipVal)
+            d3.select("#tooltip").classed("hidden", false);
             d3.select(this)
                 .attr("r", iconRadius + 5)
                 .attr("stroke", "pink")
-                .attr("stroke-width", 5)
+                .attr("stroke-width", 5);
         })
         .on("mouseout", function () {
-            d3.select(this)
+            d3.select("#tooltip").classed("hidden", true);
             d3.select(this).attr("r", iconRadius)
             .attr("stroke-width", 0)
         })
@@ -95,8 +100,6 @@ for (i = 0; i < 4; i += 1) {
     makeBilliButtons(i, billiDataset)
     makeCompareButtons(i, compareDataset)
 }
-
-
 
 // create container for graph
 var graphContainer = svg.append("g").attr("id", "balanceBar")

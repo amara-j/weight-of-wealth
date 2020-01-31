@@ -4,21 +4,16 @@
 <head>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300&display=swap" rel="stylesheet">
     <meta charset="utf-8">
-    <title>wow</title>
+    <title>can i get uhh</title>
     <script src="https://d3js.org/d3.v5.min.js"></script>
-
-    <!-- <style>
-        #graph {
-            margin: auto;
-            width: 600px;
-            border: 3pm solid black;
-        }
-    </style> -->
-
 
 </head>
 
 <body>
+
+
+    <div id="tooltip" class="hidden"> </div>
+
     <div id="graph" class="svg-container"></div>
 
     <style>
@@ -38,10 +33,13 @@
             left: 0;
         }
 
-        .compareIcon:hover{
-        background-color: pink;
-    }
-
+        .compareIcon:hover {
+            background-color: pink;
+        }
+        
+        #tooltip.hidden {
+				display: none;
+			}
     </style>
 
     <div id="userInput">
@@ -55,10 +53,7 @@
     <div id="resetButton"> <input type="button" value="Reset" /> </div>
 
 
-    
 
-    <div id="tooltip" class="hidden">
-    </div>
     <script src="./weight-of-wealth.js"></script>
     <script type="text/javascript">
         function setValues() {
