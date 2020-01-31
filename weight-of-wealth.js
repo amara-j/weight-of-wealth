@@ -25,13 +25,13 @@ billiDataset = [1.31E+11, 96500000000, 82500000000, 6000000000]
 compareDataset = [478740000, 1860476400, 2500048502, 235680000]
 //billiTooltipWorth = ["$131 billion", "$96.5 billion", "$82.5 billion", "$76 billion", 
 //"$64 billion", "$62.7 billion", "$62.5 billion", "$62.3 billion"]
-billiTooltipText = ["Jeff Bezos' Net Worth", "Bill Gates' Net Worth",
-    "Warren Buffet's Net Worth", "Bernard Arnault's Net Worth"]
+billiTooltipText = ["Jeff Bezos", "Bill Gates",
+    "Warren Buffet", "Bernard Arnault"]
 //compareTooltipWorth = ["$478 million", "$1,860,476,400"]
-compareTooltipText = ["Pay rent for entire New York City homeless population for 1 year",
-    "Feed all SNAP recipients in NYC for 1 year",
-    "Fund the World Health Organization for 1 year",
-    "Pay full price for college at Columbia for 1000 students"]
+compareTooltipText = ["pay rent for entire New York City homeless population for 1 year",
+    "feed all SNAP recipients in NYC for 1 year",
+    "fund the World Health Organization for 1 year",
+    "pay full price for college at Columbia for 1000 students"]
 
 
 var svg = d3.select("div#graph")
@@ -56,7 +56,7 @@ function makeBilliButtons(i, billiDataset) {
         .on("mouseover", function () {
             billiText = billiTooltipText[i]
             document.getElementById('tooltip').innerHTML = billiText
-            d3.select("#tooltip").classed("hidden", false);
+           // d3.select("#tooltip").classed("hidden", false);
             d3.select(this)
                 .attr("r", iconRadius + 5)
                 .attr("stroke", "gold")
@@ -79,7 +79,7 @@ function makeBilliButtons(i, billiDataset) {
             billiWorth = billiDataset[i]
             console.log("billionaire value set to", billiWorth)
             currentBilliValue = setBilliValue(billiWorth)
-            updateTextRight(billiText, 0, 0, "billitext")
+            updateTextRight(billiText, -600, -600, "billitext")
             return currentBilliValue
 
         })
@@ -96,7 +96,7 @@ function makeCompareButtons(i, compareDataset) {
         .on("mouseover", function () {
             compareText = compareTooltipText[i]
             document.getElementById('tooltip').innerHTML = compareText
-            d3.select("#tooltip").classed("hidden", false);
+            //d3.select("#tooltip").classed("hidden", false);
             d3.select(this)
                 .attr("r", iconRadius + 5)
                 .attr("stroke", "gold")
@@ -121,7 +121,7 @@ function makeCompareButtons(i, compareDataset) {
             compareWorth = compareDataset[i]
             console.log("compare value set to", compareWorth)
             currentCompareValue = setCompareValue(compareWorth)
-            updateTextRight(compareText, 0, -200, "comparetext")
+            updateTextRight(compareText, -100, -600, "comparetext")
             return currentCompareValue
         })
 }
