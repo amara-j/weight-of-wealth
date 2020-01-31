@@ -25,8 +25,8 @@ billiDataset = [1.31E+11, 96500000000, 82500000000, 6000000000]
 compareDataset = [478740000, 1860476400, 2500048502, 235680000]
 //billiTooltipWorth = ["$131 billion", "$96.5 billion", "$82.5 billion", "$76 billion", 
 //"$64 billion", "$62.7 billion", "$62.5 billion", "$62.3 billion"]
-billiTooltipText = ["Jeff Bezos", "Bill Gates", "Warren Buffet", "Bernard Arnault",
-    "Carlos Slim Helu", "Amancio Ortega", "Larry Ellison", "Mark Zuckerberg"]
+billiTooltipText = ["Jeff Bezos' Net Worth", "Bill Gates' Net Worth",
+    "Warren Buffet's Net Worth", "Bernard Arnault's Net Worth"]
 //compareTooltipWorth = ["$478 million", "$1,860,476,400"]
 compareTooltipText = ["Pay rent for entire New York City homeless population for 1 year",
     "Feed all SNAP recipients in NYC for 1 year",
@@ -54,19 +54,19 @@ function makeBilliButtons(i, billiDataset) {
         .attr("fill", "black")
         .attr("r", iconRadius)
         .on("mouseover", function () {
-            tooltipVal = billiTooltipText[i]
-            document.getElementById('tooltip').innerHTML = tooltipVal
+            billiText = billiTooltipText[i]
+            document.getElementById('tooltip').innerHTML = billiText
             d3.select("#tooltip").classed("hidden", false);
             d3.select(this)
                 .attr("r", iconRadius + 5)
-                .attr("stroke", "pink")
+                .attr("stroke", "gold")
                 .attr("stroke-width", 5)
             var tooltipXcoord = parseFloat(d3.select(this).attr("cx"))
             var tooltipYcoord = parseFloat(d3.select(this).attr("cy"))
             console.log(tooltipXcoord, tooltipYcoord)
             d3.select("#tooltip")
-                .style("left", tooltipXcoord + "px" - 50)
-                .style("top", tooltipYcoord + "px")
+                .style("left", 200 + "px")
+                .style("top", 50 + "px")
                 ;
         })
         .on("mouseout", function () {
@@ -79,7 +79,9 @@ function makeBilliButtons(i, billiDataset) {
             billiWorth = billiDataset[i]
             console.log("billionaire value set to", billiWorth)
             currentBilliValue = setBilliValue(billiWorth)
+            updateTextRight(billiText, 0, 0, "billitext")
             return currentBilliValue
+
         })
 }
 
@@ -92,22 +94,25 @@ function makeCompareButtons(i, compareDataset) {
         .attr("fill", "black")
         .attr("r", iconRadius)
         .on("mouseover", function () {
-            tooltipVal = compareTooltipText[i]
-            document.getElementById('tooltip').innerHTML = tooltipVal
+            compareText = compareTooltipText[i]
+            document.getElementById('tooltip').innerHTML = compareText
             d3.select("#tooltip").classed("hidden", false);
             d3.select(this)
                 .attr("r", iconRadius + 5)
-                .attr("stroke", "pink")
+                .attr("stroke", "gold")
                 .attr("stroke-width", 5)
-            var tooltipXcoord = parseFloat(d3.select(this).attr("cx"))
-            var tooltipYcoord = parseFloat(d3.select(this).attr("cy"))
-            console.log(tooltipXcoord, tooltipYcoord)
+            // var tooltipXcoord = parseFloat(d3.select(this).attr("cx"))
+            //  var tooltipYcoord = parseFloat(d3.select(this).attr("cy"))
+            //  console.log(tooltipXcoord, tooltipYcoord)
             d3.select("#tooltip")
-                .style("right", tooltipXcoord + "px")
-                .style("top", tooltipYcoord + "px")
+                // .style("right", tooltipXcoord + "px")
+                // .style("top", tooltipYcoord + "px")
+                .style("left", 200 + "px")
+                .style("top", 50 + "px")
 
         })
         .on("mouseout", function () {
+            d3.select("#tooltip").classed("hidden", true);
             d3.select(this).attr("r", iconRadius)
                 .attr("stroke-width", 0)
         })
@@ -116,6 +121,7 @@ function makeCompareButtons(i, compareDataset) {
             compareWorth = compareDataset[i]
             console.log("compare value set to", compareWorth)
             currentCompareValue = setCompareValue(compareWorth)
+            updateTextRight(compareText, 0, -200, "comparetext")
             return currentCompareValue
         })
 }
@@ -281,10 +287,9 @@ rightInvisible = graphContainer.append('rect')
                 // the first time it's clicked, generate the number of icons that would balance scale
                 for (i = 0; i < getCompareRatio(); i += 1) {
                     makeIcons(compareWorth, "R", i)
-                    console.log(getCompareRatio(), "to balance")
                 }
             if (rightPlateClickCount == getCompareRatio() && leftPlateClickCount >= 1) {
-                addBalanceMessage("congrats! you balanced the scale")
+                addBalanceMessage("congrats! you balanced the scale", 0, -200)
                 // fadeOutScale()
             }
             if (rightPlateClickCount <= getCompareRatio()) {
@@ -293,7 +298,7 @@ rightInvisible = graphContainer.append('rect')
                 // rotate arms each time an icon is dropped
                 var rightRotateAngle = angleScale(compareWorth)
                 rotateArms(rightRotateAngle)
-                updateTextRight(rightPlateClickCount)
+                updateTextRight(rightPlateClickCount, doubleArmLength / 2, floorHeight + 50, "rightclickcount")
             }
             // don't allow it to interact further once there are no more icons left to drop
             else if (rightPlateClickCount >= getCompareRatio()) {
@@ -318,17 +323,16 @@ leftInvisible = graphContainer.append('rect')
             leftPlateClickCount += 1;
             if (leftPlateClickCount <= 1) {
                 // the first time it's clicked, create & drop the billionaire icon
-                console.log(getCompareRatio(), "to balance")
                 // makeIcons(billionaireWorth, "L", 1)
                 makeIcons(billionaireWorth, "L", 1)
                 var leftRotateAngle = -angleScale(billionaireWorth)
                 rotateArms(leftRotateAngle)
                 dropBilliIcon()
-                updateTextLeft(leftPlateClickCount)
+                updateTextLeft(leftPlateClickCount, -doubleArmLength / 2, floorHeight + 50, "leftclickcount")
             }
             // don't allow it to interact further if clicked more than once
             if (rightPlateClickCount == getCompareRatio() && leftPlateClickCount >= 1) {
-                addBalanceMessage("congrats! you balanced the scale")
+                addBalanceMessage("congrats! you balanced the scale", 0, -200)
                 // fadeOutScale()
             }
             if (leftPlateClickCount > 1) { (console.log("no more clicks left!")) }
@@ -336,15 +340,15 @@ leftInvisible = graphContainer.append('rect')
     })
 
 // function to create message once scale is balanced
-function addBalanceMessage(message) {
+function addBalanceMessage(message, xcoord, ycoord) {
     graphContainer.append("text")
         .attr('opacity', 0)
         .attr("id", "balanceMessage")
         .text(message)
         .attr("font-family", "Open Sans Condensed")
         .attr("font-size", "20px")
-        .attr("x", 0)
-        .attr("y", -200)
+        .attr("x", xcoord)
+        .attr("y", ycoord)
         .transition()
         .delay(250)
         .duration(2000)
@@ -366,26 +370,26 @@ d3.select("#resetButton")
     })
 
 // counter for number of icons on left side
-function updateTextLeft(leftPlateClickCount) {
+function updateTextLeft(text, xcoord, ycoord, id) {
     graphContainer.append("text")
-        .attr("id", "leftText")
-        .text(leftPlateClickCount)
+        .attr("id", id)
+        .text(text)
         .attr("font-family", "Open Sans Condensed")
         .attr("font-size", "34px")
-        .attr("x", -doubleArmLength / 2)
-        .attr("y", floorHeight + 50)
+        .attr("x", xcoord)
+        .attr("y", ycoord)
 }
 
 // counter for number of icons on right side
-function updateTextRight(rightPlateClickCount) {
-    d3.select("#rightText").remove()
+function updateTextRight(text, xcoord, ycoord, id) {
+    d3.select("#" + id).remove()
     graphContainer.append("text")
-        .attr("id", "rightText")
-        .text(rightPlateClickCount)
+        .attr("id", id)
+        .text(text)
         .attr("font-family", "Open Sans Condensed")
         .attr("font-size", "34px")
-        .attr("x", doubleArmLength / 2)
-        .attr("y", floorHeight + 50)
+        .attr("x", xcoord)
+        .attr("y", ycoord)
 }
 
 var currentRotation = 0
