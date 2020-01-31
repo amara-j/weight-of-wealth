@@ -20,8 +20,19 @@ var compareWorth = null
 var tooltipVal = null
 // --------------------------------//
 
+
 billiDataset = [1.31E+11, 96500000000, 82500000000, 6000000000]
-compareDataset = [2412810000, 1860476400, 478740000, 2500048502]
+compareDataset = [478740000, 1860476400, 2500048502, 235680000]
+//billiTooltipWorth = ["$131 billion", "$96.5 billion", "$82.5 billion", "$76 billion", 
+//"$64 billion", "$62.7 billion", "$62.5 billion", "$62.3 billion"]
+billiTooltipText = ["Jeff Bezos", "Bill Gates", "Warren Buffet", "Bernard Arnault",
+    "Carlos Slim Helu", "Amancio Ortega", "Larry Ellison", "Mark Zuckerberg"]
+//compareTooltipWorth = ["$478 million", "$1,860,476,400"]
+compareTooltipText = ["Pay rent for entire New York City homeless population for 1 year",
+    "Feed all SNAP recipients in NYC for 1 year",
+    "Fund the World Health Organization for 1 year",
+    "Pay full price for college at Columbia for 1000 students"]
+
 
 var svg = d3.select("div#graph")
     .append("svg")
@@ -43,19 +54,25 @@ function makeBilliButtons(i, billiDataset) {
         .attr("fill", "black")
         .attr("r", iconRadius)
         .on("mouseover", function () {
-            tooltipVal = billiDataset[i]
+            tooltipVal = billiTooltipText[i]
             document.getElementById('tooltip').innerHTML = tooltipVal
-            console.log(tooltipVal)
             d3.select("#tooltip").classed("hidden", false);
             d3.select(this)
                 .attr("r", iconRadius + 5)
                 .attr("stroke", "pink")
-                .attr("stroke-width", 5);
+                .attr("stroke-width", 5)
+            var tooltipXcoord = parseFloat(d3.select(this).attr("cx"))
+            var tooltipYcoord = parseFloat(d3.select(this).attr("cy"))
+            console.log(tooltipXcoord, tooltipYcoord)
+            d3.select("#tooltip")
+                .style("left", tooltipXcoord + "px" - 50)
+                .style("top", tooltipYcoord + "px")
+                ;
         })
         .on("mouseout", function () {
             d3.select("#tooltip").classed("hidden", true);
             d3.select(this).attr("r", iconRadius)
-            .attr("stroke-width", 0)
+                .attr("stroke-width", 0)
         })
         .on("click", function () {
             d3.select(this).attr("fill", "pink")
@@ -75,17 +92,24 @@ function makeCompareButtons(i, compareDataset) {
         .attr("fill", "black")
         .attr("r", iconRadius)
         .on("mouseover", function () {
+            tooltipVal = compareTooltipText[i]
+            document.getElementById('tooltip').innerHTML = tooltipVal
+            d3.select("#tooltip").classed("hidden", false);
             d3.select(this)
                 .attr("r", iconRadius + 5)
                 .attr("stroke", "pink")
                 .attr("stroke-width", 5)
-                var xPosition = parseFloat(d3.select(this).attr("cx")) + 10
-				var yPosition = parseFloat(d3.select(this).attr("cy")) + 10
-				console.log(xPosition, yPosition, d3.select(this))
+            var tooltipXcoord = parseFloat(d3.select(this).attr("cx"))
+            var tooltipYcoord = parseFloat(d3.select(this).attr("cy"))
+            console.log(tooltipXcoord, tooltipYcoord)
+            d3.select("#tooltip")
+                .style("right", tooltipXcoord + "px")
+                .style("top", tooltipYcoord + "px")
+
         })
         .on("mouseout", function () {
             d3.select(this).attr("r", iconRadius)
-            .attr("stroke-width", 0)
+                .attr("stroke-width", 0)
         })
         .on("click", function () {
             d3.select(this).attr("fill", "pink")
