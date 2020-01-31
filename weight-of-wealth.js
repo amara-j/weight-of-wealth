@@ -41,14 +41,19 @@ function makeBilliButtons(i, billiDataset) {
         .attr("cx", (60 + Math.floor(i / 4)))
         .attr("fill", "black")
         .attr("r", iconRadius)
-        .on("mouseover", function () { 
-            d3.select(this).attr("fill", "gold")
+        .on("mouseover", function () {
+            d3.select(this)
+                .attr("r", iconRadius + 5)
+                .attr("stroke", "pink")
+                .attr("stroke-width", 5)
         })
-        .on("mouseout", function () { 
-            d3.select(this).attr("fill", "black")
+        .on("mouseout", function () {
+            d3.select(this)
+            d3.select(this).attr("r", iconRadius)
+            .attr("stroke-width", 0)
         })
         .on("click", function () {
-            d3.select(this).attr("fill", "red")
+            d3.select(this).attr("fill", "pink")
             billiWorth = billiDataset[i]
             console.log("billionaire value set to", billiWorth)
             currentBilliValue = setBilliValue(billiWorth)
@@ -64,14 +69,21 @@ function makeCompareButtons(i, compareDataset) {
         .attr("cx", 100 * (9 + Math.floor(i / 4)))
         .attr("fill", "black")
         .attr("r", iconRadius)
-        // .on("mouseover", function () { 
-        //     d3.select(this).attr("fill", "gold")
-        // })
-        // .on("mouseout", function () { 
-        //     d3.select(this).attr("fill", "black")
-        // })
+        .on("mouseover", function () {
+            d3.select(this)
+                .attr("r", iconRadius + 5)
+                .attr("stroke", "pink")
+                .attr("stroke-width", 5)
+                var xPosition = parseFloat(d3.select(this).attr("cx")) + 10
+				var yPosition = parseFloat(d3.select(this).attr("cy")) + 10
+				console.log(xPosition, yPosition, d3.select(this))
+        })
+        .on("mouseout", function () {
+            d3.select(this).attr("r", iconRadius)
+            .attr("stroke-width", 0)
+        })
         .on("click", function () {
-            d3.select(this).attr("fill", "red")
+            d3.select(this).attr("fill", "pink")
             compareWorth = compareDataset[i]
             console.log("compare value set to", compareWorth)
             currentCompareValue = setCompareValue(compareWorth)
