@@ -28,10 +28,10 @@ compareDataset = [478740000, 1860476400, 2500048502, 235680000]
 billiTooltipText = ["Jeff Bezos", "Bill Gates",
     "Warren Buffet", "Bernard Arnault"]
 //compareTooltipWorth = ["$478 million", "$1,860,476,400"]
-compareTooltipText = ["pay rent for entire New York City homeless population for 1 year",
-    "feed all SNAP recipients in NYC for 1 year",
-    "fund the World Health Organization for 1 year",
-    "pay full price for college at Columbia for 1000 students"]
+compareTooltipText = ["pay rent for entire New York City homeless population",
+    "feed all SNAP recipients in NYC",
+    "fund the World Health Organization",
+    "pay full price for 1000 college educations at Columbia"]
 
 
 var svg = d3.select("div#graph")
@@ -289,7 +289,9 @@ rightInvisible = graphContainer.append('rect')
                     makeIcons(compareWorth, "R", i)
                 }
             if (rightPlateClickCount == getCompareRatio() && leftPlateClickCount >= 1) {
-                addBalanceMessage("congrats! you balanced the scale", 0, -200)
+                addBalanceMessage("congrats! you balanced the scale", -100, -400)
+                addBalanceMessage(billiText + " could " + compareText + " for " 
+                + rightPlateClickCount + " years.", -200,-300)
                 // fadeOutScale()
             }
             if (rightPlateClickCount <= getCompareRatio()) {
@@ -332,7 +334,9 @@ leftInvisible = graphContainer.append('rect')
             }
             // don't allow it to interact further if clicked more than once
             if (rightPlateClickCount == getCompareRatio() && leftPlateClickCount >= 1) {
-                addBalanceMessage("congrats! you balanced the scale", 0, -200)
+                addBalanceMessage("congrats! you balanced the scale", -100, -400)
+                addBalanceMessage(billiText + " could " + compareText + " for " 
+                + rightPlateClickCount + " years.", -200,-300)
                 // fadeOutScale()
             }
             if (leftPlateClickCount > 1) { (console.log("no more clicks left!")) }
